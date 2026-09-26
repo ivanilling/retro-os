@@ -51,6 +51,13 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 400, h: 500 },
     component: React.lazy(() => import('../apps/Minesweeper')),
   },
+  {
+    id: 'paint',
+    title: 'Paint',
+    icon: '🎨',
+    defaultSize: { w: 700, h: 550 },
+    component: React.lazy(() => import('../apps/PaintApp')),
+  },
 ];
 
 export function getAppById(id: string): AppDefinition | undefined {

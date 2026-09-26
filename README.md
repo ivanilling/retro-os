@@ -33,6 +33,36 @@ A fully functional Minesweeper implementation with classic Windows 95 aesthetics
 - CSS Grid layout with Windows 95 inset/outset borders
 - Fully accessible with ARIA labels and keyboard navigation
 
+## 🎨 Paint Application
+
+A MS Paint-like drawing application built with HTML5 Canvas API:
+
+### Features:
+- **Drawing Tools**: Pencil (freehand), Line, Rectangle, Eraser
+- **Color Selection**: 16-color preset palette + custom color picker
+- **Brush Size**: Adjustable from 1px to 20px
+- **Undo**: History tracking for up to 20 states
+- **Save as PNG**: Download your artwork
+- **Clear Canvas**: Start fresh
+- **Responsive Canvas**: Automatically adapts to window resize while preserving drawings
+
+### How to Use:
+1. Open Paint from Start Menu → Applications
+2. Select a tool from the toolbar (Pencil, Line, Rectangle, or Eraser)
+3. Choose a color from the palette or use the custom color picker
+4. Adjust brush size with the slider
+5. Draw on the canvas
+6. Use Undo to fix mistakes
+7. Click Save to download your artwork as PNG
+
+### Technical Details:
+- HTML5 Canvas API for all drawing operations
+- `requestAnimationFrame` for smooth line/rectangle previews
+- `ResizeObserver` for responsive canvas with content preservation
+- Accurate mouse coordinate mapping using `getBoundingClientRect()`
+- History stack using `ImageData` for undo functionality
+- Windows 95 aesthetic with inset/outset borders
+
 ## ✨ Features
 
 ### Window Management Engine

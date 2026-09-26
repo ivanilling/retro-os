@@ -3,8 +3,8 @@ import { useWindowStore } from '../store/windowStore';
 import { appRegistry } from '../apps/registry';
 import DesktopIcon from './DesktopIcon';
 
-// Показываем только основные приложения на рабочем столе (не settings/about/minesweeper)
-const desktopApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper'].includes(app.id));
+// Показываем только основные приложения на рабочем столе (не settings/about/minesweeper/paint)
+const desktopApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper', 'paint'].includes(app.id));
 
 export default function Desktop() {
   const openWindow = useWindowStore(s => s.openWindow);
