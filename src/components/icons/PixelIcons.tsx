@@ -84,29 +84,7 @@ export const PaintIcon: React.FC<IconProps> = ({ size = 16, className }) => (
   </svg>
 );
 
-// Browser Icon - 16x16 pixel art
-export const BrowserIcon: React.FC<IconProps> = ({ size = 16, className }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    className={className}
-    style={{ imageRendering: 'pixelated' }}
-  >
-    {/* Window frame */}
-    <rect x="1" y="1" width="14" height="14" fill="#c0c0c0" />
-    <rect x="2" y="2" width="12" height="2" fill="#000080" />
-    <rect x="2" y="4" width="12" height="10" fill="#ffffff" />
-    {/* Address bar */}
-    <rect x="3" y="5" width="10" height="2" fill="#ffffff" />
-    <rect x="3" y="5" width="10" height="1" fill="#808080" />
-    {/* Content */}
-    <rect x="3" y="8" width="4" height="4" fill="#00ff00" />
-    <rect x="8" y="8" width="4" height="1" fill="#000000" />
-    <rect x="8" y="10" width="4" height="1" fill="#000000" />
-    <rect x="8" y="12" width="4" height="1" fill="#000000" />
-  </svg>
-);
+
 
 // Games Folder Icon - 16x16 pixel art
 export const GamesFolderIcon: React.FC<IconProps> = ({ size = 16, className }) => (

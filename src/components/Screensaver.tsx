@@ -19,7 +19,7 @@ export default function Screensaver() {
 
   useEffect(() => {
     // Создаём начальные окна
-    const titles = ['My Computer', 'Notepad', 'Terminal', 'Paint', 'Browser', 'Settings'];
+    const titles = ['My Computer', 'Notepad', 'Terminal', 'Paint', 'Settings', 'Calculator'];
     const colors = ['#000080', '#800000', '#008000', '#808000', '#008080', '#800080'];
     
     const initialWindows: FlyingWindow[] = Array.from({ length: 8 }, (_, i) => ({
