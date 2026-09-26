@@ -239,7 +239,7 @@ export default function Terminal({ windowId }: TerminalProps) {
 
         {/* Input line */}
         <div className="flex items-center">
-          <span className="text-cyan-400 mr-2">$</span>
+          <span className="text-cyan-400 mr-2">ivanilling@retro-os:~$</span>
           <input
             ref={inputRef}
             type="text"

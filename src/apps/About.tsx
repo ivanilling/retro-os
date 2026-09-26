@@ -48,7 +48,7 @@ export default function About() {
           </div>
 
           <p className="text-xs text-gray-400 text-center pt-4">
-            © 2024 Alex Chen. All rights reserved.
+            © 2024 ivanilling. All rights reserved.
           </p>
         </div>
       </div>

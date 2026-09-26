@@ -180,11 +180,7 @@ const contactCommand: Command = {
   description: 'Show contact information',
   execute: async () => {
     return `
-📬 Contact Me:
-  Email:    alex@example.com
-  GitHub:   github.com/alexchen
-  LinkedIn: linkedin.com/in/alexchen
-  Twitter:  @alexchen_dev
+📬 Contact: ivanilling
 `;
   },
 };

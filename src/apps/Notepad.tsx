@@ -3,29 +3,30 @@ import { useWindowStore } from '../store/windowStore';
 
 const STORAGE_KEY = 'retro-os-notepad-content';
 
-const DEFAULT_CONTENT = `# About Me
+const DEFAULT_CONTENT = `TODO:
+- fix dino sprite matrix
+- add more radiohead tracks?
+- deploy to vercel
+- test on mobile
 
-Welcome to my digital workspace! I'm a passionate full-stack developer who loves building things that live on the internet.
+ideas:
+- maybe add a calculator app?
+- terminal needs 'neofetch' command
+- screensaver with flying toasters?
 
-## Experience
+notes:
+this os is built with react + ts
+games use canvas api
+audio uses web audio api for noise
 
-🎯 5+ years of professional development experience
-🚀 Built and shipped 20+ production applications
-🌟 Open source contributor with 2k+ GitHub stars
+contact: ivanilling
 
-## Philosophy
+random thoughts:
+why did i spend 3 weeks on crt effects
+the snake game is actually pretty fun
+need to fix the browser iframe issue
 
-I believe in writing clean, maintainable code that solves real problems. Every pixel matters, and every millisecond counts.
-
-## Fun Facts
-
-- ☕ Coffee enthusiast (4 cups/day minimum)
-- 🎮 Retro gaming collector
-- 📚 Always learning something new
-- 🌍 Digital nomad
-
----
-Feel free to edit this notepad! Your changes are auto-saved.`;
+- ivanilling`;
 
 export default function Notepad() {
   const storedContent = useWindowStore(s => s.notepadContent);

@@ -96,25 +96,24 @@ export default function Desktop() {
 
       {/* SEO контент */}
       <div className="sr-only" aria-hidden="false">
-        <h1>Alex Chen - Full Stack Developer Portfolio</h1>
-        <p>Full-stack developer with 5+ years of experience building modern web applications.</p>
+        <h1>ivanilling - Retro OS Portfolio</h1>
+        <p>Interactive Windows 95-inspired portfolio built with React and TypeScript.</p>
         <section>
           <h2>Projects</h2>
           <ul>
-            <li>Retro OS Portfolio - A Windows 95-inspired portfolio website</li>
-            <li>Cloud Dashboard - Real-time monitoring dashboard</li>
-            <li>AI Chat Platform - GPT-powered chat application</li>
-            <li>E-Commerce Engine - Headless commerce solution</li>
-            <li>Open Source UI Library - React component library</li>
+            <li>Retro OS Portfolio - This website</li>
+            <li>Games - Snake, Tetris, Dino Runner, Minesweeper</li>
+            <li>Terminal - Custom CLI with matrix effect</li>
+            <li>Music Player - Lo-fi audio player with procedural noise</li>
           </ul>
         </section>
         <section>
-          <h2>Skills</h2>
-          <p>TypeScript, JavaScript, Python, Rust, React, Vue, Svelte, Tailwind CSS, Node.js, Express, FastAPI, Go, PostgreSQL, MongoDB, Redis, Docker, Kubernetes, AWS</p>
+          <h2>Built with</h2>
+          <p>React, TypeScript, Tailwind CSS, Zustand, Canvas API, Web Audio API</p>
         </section>
         <section>
           <h2>Contact</h2>
-          <p>Email: alex@example.com | GitHub: github.com/alexchen | LinkedIn: linkedin.com/in/alexchen</p>
+          <p>ivanilling</p>
         </section>
       </div>
 
