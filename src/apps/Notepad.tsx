@@ -3,19 +3,20 @@ import { useWindowStore } from '../store/windowStore';
 
 const STORAGE_KEY = 'retro-os-notepad-content';
 
-const DEFAULT_CONTENT = ``;
-
 export default function Notepad() {
   const storedContent = useWindowStore(s => s.notepadContent);
   const setNotepadContent = useWindowStore(s => s.setNotepadContent);
-  const [content, setContent] = useState(storedContent || DEFAULT_CONTENT);
+  const [content, setContent] = useState('');
   const [isSaved, setIsSaved] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Очищаем при загрузке - всегда начинаем с пустого файла
   useEffect(() => {
-    setContent(storedContent || DEFAULT_CONTENT);
-  }, [storedContent]);
+    setContent('');
+    setNotepadContent('');
+    localStorage.setItem(STORAGE_KEY, '');
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
