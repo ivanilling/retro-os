@@ -39,6 +39,21 @@ const CassetteFallback: React.FC = () => (
   </svg>
 );
 
+/**
+ * 🎵 AUDIO FILE PLACEMENT INSTRUCTIONS 🎵
+ * 
+ * To add music to this player, place your MP3 files in:
+ * public/audio/
+ * 
+ * Required filenames (must match exactly):
+ * - creep.mp3
+ * - just.mp3
+ * - no-surprises.mp3
+ * 
+ * The player will automatically detect and play these files.
+ * If files are missing, the player will show a friendly warning message.
+ */
+
 export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -48,12 +63,44 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [coverError, setCoverError] = useState(false);
+  const [audioFilesMissing, setAudioFilesMissing] = useState(false);
   const [visualizerBars, setVisualizerBars] = useState([20, 20, 20, 20, 20]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const { start: startNoise, stop: stopNoise, setVolume: setNoiseVolumeLevel } = useRetroNoise();
 
   const currentTrack = playlist[currentTrackIndex];
+
+  // Check if audio files exist
+  useEffect(() => {
+    const checkAudioFiles = async () => {
+      const requiredFiles = ['creep.mp3', 'just.mp3', 'no-surprises.mp3'];
+      let missingCount = 0;
+      
+      for (const file of requiredFiles) {
+        try {
+          const response = await fetch(`/audio/${file}`, { method: 'HEAD' });
+          if (!response.ok) {
+            missingCount++;
+          }
+        } catch (error) {
+          missingCount++;
+        }
+      }
+      
+      if (missingCount > 0) {
+        console.warn(`⚠️ Audio files missing! ${missingCount} of ${requiredFiles.length} files not found.`);
+        console.warn('Please add MP3 files to: public/audio/');
+        console.warn('Required files:');
+        requiredFiles.forEach(file => console.warn(`  - ${file}`));
+        setAudioFilesMissing(true);
+      } else {
+        setAudioFilesMissing(false);
+      }
+    };
+    
+    checkAudioFiles();
+  }, []);
 
   // Обновление громкости музыки
   useEffect(() => {
@@ -176,6 +223,25 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-800 p-2">
+      {/* Audio Files Warning */}
+      {audioFilesMissing && (
+        <div className="bg-yellow-900 border-2 border-yellow-600 p-3 mb-3 text-yellow-200 text-xs font-mono">
+          <div className="font-bold mb-1">⚠️ Audio files missing!</div>
+          <div className="text-[10px]">
+            Please add MP3 files to: <code className="bg-black px-1">/public/audio/</code>
+          </div>
+          <div className="text-[10px] mt-1">Required files:</div>
+          <ul className="text-[10px] ml-2 list-disc">
+            <li>creep.mp3</li>
+            <li>just.mp3</li>
+            <li>no-surprises.mp3</li>
+          </ul>
+          <div className="text-[10px] mt-1 text-yellow-400">
+            The player will work with procedural noise until files are added.
+          </div>
+        </div>
+      )}
+      
       {/* Main Player */}
       <div className="flex gap-3 mb-3">
         {/* Album Cover - always show cassette fallback (no external images) */}

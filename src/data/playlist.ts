@@ -1,3 +1,26 @@
+/**
+ * 🎵 MUSIC PLAYLIST CONFIGURATION 🎵
+ * 
+ * AUDIO FILE PLACEMENT:
+ * Place your MP3 files in: public/audio/
+ * 
+ * Required filenames (must match exactly):
+ * - creep.mp3
+ * - just.mp3
+ * - no-surprises.mp3
+ * 
+ * The MusicPlayer component will automatically detect these files
+ * and play them. If files are missing, a warning message will be shown.
+ * 
+ * COVER ART (Optional):
+ * Place cover images in: public/covers/
+ * - pablo-honey.jpg (300x300px recommended)
+ * - the-bends.jpg
+ * - ok-computer.jpg
+ * 
+ * If cover images are missing, a pixel-art cassette fallback will be shown.
+ */
+
 export interface Track {
   id: string;
   title: string;
@@ -15,8 +38,8 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'Pablo Honey',
     duration: '3:56',
-    audioSrc: '',
-    coverSrc: '',
+    audioSrc: '/audio/creep.mp3',
+    coverSrc: '/covers/pablo-honey.jpg',
   },
   {
     id: '2',
@@ -24,8 +47,8 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'The Bends',
     duration: '3:54',
-    audioSrc: '',
-    coverSrc: '',
+    audioSrc: '/audio/just.mp3',
+    coverSrc: '/covers/the-bends.jpg',
   },
   {
     id: '3',
@@ -33,7 +56,7 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'OK Computer',
     duration: '3:49',
-    audioSrc: '',
-    coverSrc: '',
+    audioSrc: '/audio/no-surprises.mp3',
+    coverSrc: '/covers/ok-computer.jpg',
   },
 ];
