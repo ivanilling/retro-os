@@ -149,6 +149,46 @@ A fully functional Minesweeper implementation with classic Windows 95 aesthetics
 - CSS Grid layout with Windows 95 inset/outset borders
 - Fully accessible with ARIA labels and keyboard navigation
 
+## 🎮 Tetris Game
+
+A fully functional Tetris implementation with classic gameplay mechanics:
+
+### Features:
+- **All 7 Tetrominoes** - I, J, L, O, S, T, Z pieces with correct rotation
+- **Canvas Rendering** - Smooth 60fps gameplay with pixelated retro aesthetic
+- **Gravity System** - Pieces fall automatically, speed increases with level
+- **Line Clearing** - Single (100), Double (300), Triple (500), Tetris (800) points
+- **Level System** - Level up every 10 lines cleared, increases drop speed
+- **Next Piece Preview** - See what's coming next
+- **Hold Piece** - Store a piece for later (press C)
+- **Hard Drop** - Instant drop (press Space)
+- **Soft Drop** - Faster fall (hold Down arrow)
+- **Wall Kicks** - Smart rotation near walls
+- **High Score** - Persisted to localStorage
+
+### Controls:
+- **← →** - Move piece left/right
+- **↑** - Rotate piece
+- **↓** - Soft drop (faster fall, +1 point per cell)
+- **Space** - Hard drop (instant drop) or start/restart game
+- **C** - Hold current piece
+- **P** - Pause/resume game
+
+### Scoring:
+- **Single line** - 100 × (level + 1)
+- **Double line** - 300 × (level + 1)
+- **Triple line** - 500 × (level + 1)
+- **Tetris (4 lines)** - 800 × (level + 1)
+- **Soft drop** - 1 point per cell
+
+### Technical Details:
+- **Modular architecture** - Logic separated in `tetrisLogic.ts`
+- **Type-safe** - Full TypeScript with strict mode
+- **Canvas rendering** - 10x20 grid with 28px cells
+- **Delta-time game loop** - Consistent speed across devices
+- **SRS-like rotation** - Wall kicks for better gameplay
+- **Auto-pause** - Pauses when window loses focus
+
 ## 🐍 Snake Game
 
 A classic Snake game implementation with smooth 60fps gameplay:
