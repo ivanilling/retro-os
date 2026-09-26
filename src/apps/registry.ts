@@ -72,6 +72,13 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 550, h: 650 },
     component: React.lazy(() => import('../apps/TetrisGame')),
   },
+  {
+    id: 'dino',
+    title: 'Dino Runner',
+    icon: '🦖',
+    defaultSize: { w: 850, h: 450 },
+    component: React.lazy(() => import('../apps/DinoRunGame')),
+  },
 ];
 
 export function getAppById(id: string): AppDefinition | undefined {

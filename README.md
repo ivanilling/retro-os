@@ -222,6 +222,36 @@ A classic Snake game implementation with smooth 60fps gameplay:
 - ARIA live region announces score changes
 - Keyboard-only accessible
 
+## 🦖 Dino Runner Game
+
+An infinite runner game inspired by Chrome's Dino game:
+
+### Features:
+- **Canvas Rendering** - Smooth 60fps gameplay with pixel art aesthetic
+- **Procedural Graphics** - All sprites drawn programmatically (no external images)
+- **Jump Physics** - Realistic gravity and jumping mechanics
+- **Ducking** - Reduces hitbox to dodge flying obstacles
+- **Fast Fall** - Jump while ducking for quick descent
+- **Obstacles** - Cacti (small/large/groups) and pterodactyls at different heights
+- **Day/Night Cycle** - Color inversion every 700 points with smooth transition
+- **Clouds** - Decorative elements for atmosphere
+- **Progressive Difficulty** - Speed increases over time
+- **Score System** - Distance-based scoring
+- **High Score** - Persisted to localStorage
+
+### Controls:
+- **Space/↑** - Jump (or start/restart)
+- **↓** - Duck
+- **Space while ducking** - Fast fall
+
+### Mechanics:
+- Automatic speed increase
+- Random obstacle generation
+- Pterodactyls at varying heights
+- Smooth day/night transition
+- Running animation for dino
+- Wing animation for pterodactyls
+
 ## 🎨 Paint Application
 
 A MS Paint-like drawing application built with HTML5 Canvas API:

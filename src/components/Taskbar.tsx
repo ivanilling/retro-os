@@ -95,7 +95,7 @@ export default function Taskbar() {
               aria-label={`${win.title} - ${win.isMinimized ? 'minimized' : 'active'}`}
               aria-pressed={!win.isMinimized}
             >
-              <span className="text-sm">{win.appId === 'terminal' ? '💻' : win.appId === 'notepad' ? '📝' : win.appId === 'image-viewer' ? '🖼️' : win.appId === 'browser' ? '🌐' : win.appId === 'settings' ? '⚙️' : win.appId === 'about' ? 'ℹ️' : win.appId === 'minesweeper' ? '💣' : win.appId === 'paint' ? '🎨' : win.appId === 'snake' ? '🐍' : win.appId === 'tetris' ? '🎮' : '📁'}</span>
+              <span className="text-sm">{win.appId === 'terminal' ? '💻' : win.appId === 'notepad' ? '📝' : win.appId === 'image-viewer' ? '🖼️' : win.appId === 'browser' ? '🌐' : win.appId === 'settings' ? '⚙️' : win.appId === 'about' ? 'ℹ️' : win.appId === 'minesweeper' ? '💣' : win.appId === 'paint' ? '🎨' : win.appId === 'snake' ? '🐍' : win.appId === 'tetris' ? '🎮' : win.appId === 'dino' ? '🦖' : '📁'}</span>
               <span className="truncate">{win.title}</span>
             </button>
           ))}
