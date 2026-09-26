@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика 410 Error</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .error { color: #f00; font-weight: bold; }
+        .success { color: #0f0; }
+        .info { color: #0ff; }
+        pre {
+            background: #111;
+            padding: 10px;
+            border: 1px solid #333;
+            overflow-x: auto;
+        }
+        .check { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Диагностика ошибки 410 Gone</h1>
+    
+    <div class="check">
+        <h2>1. Проверка файлов</h2>
+        <script>
+            const files = [
+                '/favicon.ico',
+                '/favicon.svg',
+                '/index.html',
+                '/assets/index.css',
+                '/assets/index.js'
+            ];
+            
+            files.forEach(file => {
+                fetch(file, { method: 'HEAD' })
+                    .then(r => {
+                        const status = r.status;
+                        const statusText = status === 200 ? '✅ OK' : 
+                                          status === 410 ? '❌ 410 GONE' : 
+                                          status === 404 ? '⚠️ 404 NOT FOUND' : 
+                                          `⚠️ ${status}`;
+                        document.write(`<div class="${status === 200 ? 'success' : 'error'}">${file}: ${statusText}</div>`);
+                    })
+                    .catch(e => {
+                        document.write(`<div class="error">${file}: ❌ ОШИБКА</div>`);
+                    });
+            });
+        </script>
+    </div>
+
+    <div class="check">
+        <h2>2. Информация о сервере</h2>
+        <div class="info">
+            <p>User Agent: <script>document.write(navigator.userAgent)</script></p>
+            <p>URL: <script>document.write(window.location.href)</script></p>
+            <p>Время: <script>document.write(new Date().toLocaleString())</script></p>
+        </div>
+    </div>
+
+    <div class="check">
+        <h2>3. Что делать</h2>
+        <ol>
+            <li>Скопируйте URL файла с ошибкой 410</li>
+            <li>Проверьте логи сервера: <code>sudo tail -f /var/log/nginx/error.log | grep 410</code></li>
+            <li>Очистите кэш: <code>sudo rm -rf /var/cache/nginx/*</code></li>
+            <li>Перезагрузите Nginx: <code>sudo systemctl reload nginx</code></li>
+        </ol>
+    </div>
+
+    <div class="check">
+        <h2>4. Быстрое решение</h2>
+        <pre>
+# Создайте пустой favicon.ico
+sudo touch /var/www/retro-os/favicon.ico
+
+# Или добавьте в nginx.conf:
+location = /favicon.ico {
+    return 204;
+}
+
+# Перезагрузите nginx
+sudo systemctl reload nginx
+        </pre>
+    </div>
+</body>
+</html>
