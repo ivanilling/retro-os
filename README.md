@@ -32,6 +32,125 @@ Windows 95 Explorer-style file browser for navigating the virtual file system:
 - Responsive grid layout
 - Accessible with ARIA labels and keyboard support
 
+## 🧮 Calculator
+
+Classic Windows 95-style calculator with full keyboard support:
+
+### Features:
+- **Standard Layout** - Digits 0-9, operations (+, -, *, /), decimal point
+- **Win95 Styling** - Inset display, outset buttons with 3D effect
+- **Keyboard Support** - Full numpad and keyboard input
+  - Digits: 0-9
+  - Operations: +, -, *, /
+  - Enter or = for equals
+  - Escape or C for clear
+  - Backspace to delete last digit
+  - Decimal point (.)
+- **Error Handling** - Division by zero returns 0
+- **Chain Operations** - Can chain multiple operations
+
+### Controls:
+- **Mouse** - Click buttons to input
+- **Keyboard** - Full keyboard support for all operations
+- **Clear (C)** - Reset calculator to 0
+
+## 📎 Clippy Assistant
+
+Animated Office Assistant that appears to help users:
+
+### Features:
+- **Animated SVG Character** - Paperclip-style assistant with eyes and eyebrows
+- **Smart Appearance** - Appears after 30 seconds of inactivity or randomly every 2-5 minutes
+- **Helpful Tips** - Random tips about using the OS
+  - "Looks like you're coding a portfolio. Need help?"
+  - "Have you tried the Snake game?"
+  - "Did you know you can drag windows by their title bar?"
+  - And more!
+- **Speech Bubble** - Classic comic-style speech bubble with arrow
+- **Dismissible** - Click X button to close
+- **Minimizable** - Click Clippy to minimize/restore
+
+### Tips Include:
+- Portfolio coding help
+- Game suggestions
+- Window management tips
+- Terminal commands
+- Desktop shortcuts
+
+## 💙 BSOD (Blue Screen of Death)
+
+Classic Windows blue screen easter egg:
+
+### Trigger Methods:
+1. **Terminal Command** - Type `sudo crash` in Terminal
+2. **Hidden Click Zone** - (Coming soon)
+
+### Features:
+- **Full-Screen Overlay** - Classic blue background (#0000AA)
+- **White Text** - Error message with technical details
+- **Error Code** - STOP: 0x000000D1 (DRIVER_IRQL_NOT_LESS_OR_EQUAL)
+- **Countdown** - Auto-reboot after 5 seconds
+- **Fade Animation** - Smooth fade-in effect
+- **System Reset** - Closes all windows on reboot
+
+### Technical Details:
+- Triggered via custom event `trigger-bsod`
+- 5-second countdown with visual feedback
+- Automatic system state reset
+- Cannot be dismissed manually (authentic BSOD experience!)
+
+## 🖱️ Context Menu
+
+Custom right-click menu for the desktop:
+
+### Features:
+- **Dynamic Positioning** - Appears at mouse cursor location
+- **Boundary Detection** - Adjusts position to stay within viewport
+- **Win95 Styling** - Classic menu with hover effects
+- **Keyboard Support** - Press Escape to close
+
+### Menu Items:
+- **🔄 Refresh** - Reload the desktop
+- **🖼️ Change Wallpaper** - (Coming soon)
+- **📁 New Folder** - (Coming soon)
+- **⚙️ Properties** - Open Settings window
+
+### Usage:
+- Right-click on empty desktop area
+- Click menu items to execute actions
+- Click outside menu to close
+- Press Escape to dismiss
+
+## 🌐 Browser (Upgraded)
+
+Enhanced browser with iframe support and error handling:
+
+### Features:
+- **Iframe Rendering** - Load websites in embedded frame
+- **Address Bar** - Enter any URL with auto-https
+- **Bookmarks** - Quick access to safe sites
+  - Wikipedia
+  - MDN Web Docs
+  - GitHub
+- **Error Handling** - Graceful handling of X-Frame-Options errors
+  - Shows "This site refuses to be framed" message
+  - Provides "Open in new tab" link
+- **Loading State** - Visual feedback during page load
+- **Security** - Sandboxed iframe with limited permissions
+
+### Error Handling:
+When a website blocks iframe embedding (X-Frame-Options: DENY):
+- Shows friendly error message
+- Displays the problematic URL
+- Provides direct link to open in new tab
+- No broken iframe or blank screen
+
+### Bookmarks:
+Pre-loaded safe sites that allow framing:
+- Wikipedia (en.wikipedia.org)
+- MDN Web Docs (developer.mozilla.org)
+- GitHub (github.com)
+
 ## 🎵 Music Player ("Radiohead Lo-Fi Station")
 
 A Winamp/WMP9-inspired music player with procedural retro noise generation:

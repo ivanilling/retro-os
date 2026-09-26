@@ -67,6 +67,17 @@ export default function Terminal({ windowId }: TerminalProps) {
     setCommandHistory(prev => [...prev, trimmed]);
     setHistoryIndex(-1);
 
+    // Секретная команда sudo crash
+    if (trimmed.toLowerCase() === 'sudo crash') {
+      setLines(prev => [...prev, { 
+        type: 'error', 
+        content: 'CRITICAL ERROR: System crash initiated...' 
+      }]);
+      // Триггерим BSOD через кастомное событие
+      window.dispatchEvent(new CustomEvent('trigger-bsod'));
+      return;
+    }
+
     // Парсинг команды и аргументов
     const parts = trimmed.split(' ');
     const commandName = parts[0];

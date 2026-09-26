@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useWindowStore } from '../store/windowStore';
 import { getFolderContents } from '../apps/vfs';
 import { appRegistry } from '../apps/registry';
 import DesktopIcon from './DesktopIcon';
 import AppIcon from './icons/AppIcon';
+import ContextMenu from './ContextMenu';
 
 // Иконки на рабочем столе из VFS
 const desktopContents = getFolderContents('/Desktop');
@@ -13,13 +14,22 @@ export default function Desktop() {
   const closeStartMenu = useWindowStore(s => s.closeStartMenu);
   const selectedIconId = useWindowStore(s => s.selectedIconId);
   const setSelectedIcon = useWindowStore(s => s.setSelectedIcon);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   const handleDesktopClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeStartMenu();
       setSelectedIcon(null);
+      setContextMenu(null);
     }
   }, [closeStartMenu, setSelectedIcon]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    if (e.target === e.currentTarget) {
+      setContextMenu({ x: e.clientX, y: e.clientY });
+    }
+  }, []);
 
   const handleIconDoubleClick = useCallback((item: any) => {
     if (item.appId) {
@@ -40,6 +50,7 @@ export default function Desktop() {
     <main
       className="absolute inset-0 bottom-10 overflow-hidden desktop-area"
       onClick={handleDesktopClick}
+      onContextMenu={handleContextMenu}
       role="application"
       aria-label="Desktop"
       style={{
@@ -103,6 +114,25 @@ export default function Desktop() {
           <p>Email: alex@example.com | GitHub: github.com/alexchen | LinkedIn: linkedin.com/in/alexchen</p>
         </section>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          onRefresh={() => window.location.reload()}
+          onChangeWallpaper={() => {
+            // TODO: Implement wallpaper changer
+            alert('Wallpaper changer coming soon!');
+          }}
+          onProperties={() => openWindow('settings', 'Settings', 'settings', { w: 400, h: 450 })}
+          onNewFolder={() => {
+            // TODO: Implement new folder creation
+            alert('New folder creation coming soon!');
+          }}
+        />
+      )}
     </main>
   );
 }

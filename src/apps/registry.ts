@@ -90,6 +90,14 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 450, h: 550 },
     component: React.lazy(() => import('../apps/MusicPlayer')),
   },
+  // Calculator
+  {
+    id: 'calculator',
+    title: 'Calculator',
+    icon: '🧮',
+    defaultSize: { w: 300, h: 400 },
+    component: React.lazy(() => import('../apps/Calculator')),
+  },
 ];
 
 // Приложения для рабочего стола (максимум 6)

@@ -372,3 +372,28 @@ export const MusicPlayerIcon: React.FC<IconProps> = ({ size = 16, className }) =
     <rect x="10" y="6" width="3" height="2" fill="#000000" />
   </svg>
 );
+
+// Calculator Icon - 16x16 pixel art
+export const CalculatorIcon: React.FC<IconProps> = ({ size = 16, className }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    className={className}
+    style={{ imageRendering: 'pixelated' }}
+  >
+    {/* Body */}
+    <rect x="3" y="2" width="10" height="12" fill="#c0c0c0" />
+    <rect x="3" y="2" width="10" height="1" fill="#ffffff" />
+    <rect x="3" y="13" width="10" height="1" fill="#808080" />
+    {/* Display */}
+    <rect x="4" y="3" width="8" height="3" fill="#00ff00" />
+    {/* Buttons */}
+    <rect x="4" y="7" width="2" height="2" fill="#808080" />
+    <rect x="7" y="7" width="2" height="2" fill="#808080" />
+    <rect x="10" y="7" width="2" height="2" fill="#808080" />
+    <rect x="4" y="10" width="2" height="2" fill="#808080" />
+    <rect x="7" y="10" width="2" height="2" fill="#808080" />
+    <rect x="10" y="10" width="2" height="2" fill="#ff0000" />
+  </svg>
+);

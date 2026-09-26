@@ -14,6 +14,7 @@ import {
   SettingsIcon,
   AboutIcon,
   MusicPlayerIcon,
+  CalculatorIcon,
 } from './PixelIcons';
 
 interface AppIconProps {
@@ -37,6 +38,7 @@ const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> =
   settings: SettingsIcon,
   about: AboutIcon,
   'music-player': MusicPlayerIcon,
+  calculator: CalculatorIcon,
   folder: GamesFolderIcon, // Default folder icon
 };
 

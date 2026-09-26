@@ -7,6 +7,8 @@ import Taskbar from './components/Taskbar';
 import CRTOverlay from './components/CRTOverlay';
 import BootSequence from './components/BootSequence';
 import Screensaver from './components/Screensaver';
+import BSOD from './apps/BSOD';
+import Clippy from './apps/Clippy';
 
 // Persist state to localStorage
 function usePersistState() {
@@ -84,6 +86,7 @@ function LoadingScreen() {
 export default function App() {
   const windows = useWindowStore(s => s.windows);
   const [bootComplete, setBootComplete] = useState(false);
+  const [isBSODActive, setIsBSODActive] = useState(false);
   const isScreensaverActive = useScreensaver();
   usePersistState();
 
@@ -99,8 +102,26 @@ export default function App() {
     return () => document.removeEventListener('contextmenu', handler);
   }, []);
 
+  // BSOD event listener
+  useEffect(() => {
+    const handleBSOD = () => {
+      setIsBSODActive(true);
+    };
+
+    window.addEventListener('trigger-bsod', handleBSOD);
+    return () => window.removeEventListener('trigger-bsod', handleBSOD);
+  }, []);
+
   const handleBootComplete = useCallback(() => {
     setBootComplete(true);
+  }, []);
+
+  const handleBSODReboot = useCallback(() => {
+    setIsBSODActive(false);
+    // Reset all windows
+    useWindowStore.getState().windows.forEach(w => {
+      useWindowStore.getState().closeWindow(w.id);
+    });
   }, []);
 
   return (
@@ -129,6 +150,12 @@ export default function App() {
 
           {/* Screensaver */}
           {isScreensaverActive && <Screensaver />}
+
+          {/* Clippy Assistant */}
+          <Clippy />
+
+          {/* BSOD */}
+          <BSOD isActive={isBSODActive} onReboot={handleBSODReboot} />
         </Suspense>
       )}
     </div>
