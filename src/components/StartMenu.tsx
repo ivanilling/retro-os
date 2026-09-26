@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useWindowStore } from '../store/windowStore';
 import { desktopApps, gamesApps, utilityApps } from '../apps/registry';
 import { useAudio } from '../hooks/useAudio';
+import AppIcon from './icons/AppIcon';
 
 interface MenuItem {
   id: string;
@@ -18,7 +19,7 @@ const menuItems: MenuItem[] = [
   ...desktopApps.map(app => ({
     id: app.id,
     label: app.title,
-    icon: app.icon,
+    icon: app.id,
     action: 'app' as const,
     appId: app.id,
     title: app.title,
@@ -29,17 +30,17 @@ const menuItems: MenuItem[] = [
   {
     id: 'games-folder',
     label: 'Games',
-    icon: '🎮',
+    icon: 'games-folder',
     action: 'folder' as const,
     appId: 'games-folder',
     title: 'Games',
     defaultSize: { w: 600, h: 450 },
   },
-  // Отдельные игры (для быстрого доступа)
+  // Отдельные игры
   ...gamesApps.map(app => ({
     id: app.id,
     label: app.title,
-    icon: app.icon,
+    icon: app.id,
     action: 'app' as const,
     appId: app.id,
     title: app.title,
@@ -50,14 +51,14 @@ const menuItems: MenuItem[] = [
   ...utilityApps.map(app => ({
     id: app.id,
     label: app.title,
-    icon: app.icon,
+    icon: app.id,
     action: (app.id === 'settings' ? 'settings' : 'about') as 'settings' | 'about',
     appId: app.id,
     title: app.title,
     defaultSize: app.defaultSize,
   })),
   { id: 'sep3', label: '', icon: '', action: 'separator' },
-  { id: 'shutdown', label: 'Shut Down...', icon: '⏻', action: 'shutdown' },
+  { id: 'shutdown', label: 'Shut Down...', icon: 'settings', action: 'shutdown' },
 ];
 
 const actionableItems = menuItems.filter(item => item.action !== 'separator');
@@ -170,7 +171,9 @@ export default function StartMenu() {
                 role="menuitem"
                 aria-label={item.label}
               >
-                <span className="text-xl w-7 text-center">{item.icon}</span>
+                <span className="w-7 h-7 flex items-center justify-center">
+                  <AppIcon name={item.icon} size={24} />
+                </span>
                 <span className="font-medium">{item.label}</span>
               </button>
             );

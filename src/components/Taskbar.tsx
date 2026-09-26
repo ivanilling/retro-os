@@ -3,6 +3,7 @@ import { useWindowStore } from '../store/windowStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useSound } from '../hooks/useSound';
 import StartMenu from './StartMenu';
+import AppIcon from './icons/AppIcon';
 
 export default function Taskbar() {
   const windows = useWindowStore(s => s.windows);
@@ -95,7 +96,9 @@ export default function Taskbar() {
               aria-label={`${win.title} - ${win.isMinimized ? 'minimized' : 'active'}`}
               aria-pressed={!win.isMinimized}
             >
-              <span className="text-sm">{win.appId === 'terminal' ? '💻' : win.appId === 'notepad' ? '📝' : win.appId === 'image-viewer' ? '🖼️' : win.appId === 'browser' ? '🌐' : win.appId === 'settings' ? '⚙️' : win.appId === 'about' ? 'ℹ️' : win.appId === 'minesweeper' ? '💣' : win.appId === 'paint' ? '🎨' : win.appId === 'snake' ? '🐍' : win.appId === 'tetris' ? '🎮' : win.appId === 'dino' ? '🦖' : win.appId === 'games-folder' ? '🎮' : '📁'}</span>
+              <span className="w-4 h-4 flex items-center justify-center">
+                <AppIcon name={win.appId} size={16} />
+              </span>
               <span className="truncate">{win.title}</span>
             </button>
           ))}

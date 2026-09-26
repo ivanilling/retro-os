@@ -32,6 +32,32 @@ Windows 95 Explorer-style file browser for navigating the virtual file system:
 - Responsive grid layout
 - Accessible with ARIA labels and keyboard support
 
+## 🎨 Custom Pixel-Art Icons
+
+All emoji icons have been replaced with custom pixel-art SVG icons:
+
+### Icon Set:
+- **Terminal** - Black screen with green cursor
+- **Notepad** - Paper with lines and pencil
+- **Paint** - Palette with paint colors
+- **Browser** - Window with address bar
+- **Games Folder** - Yellow folder with game controller
+- **My Computer** - Monitor with stand
+- **Recycle Bin** - Trash can with recycle arrows
+- **Minesweeper** - Mine with flag
+- **Snake** - Green snake with red food
+- **Tetris** - Colorful tetromino pieces
+- **Dino Runner** - Pixel dinosaur with cactus
+- **Settings** - Gear icon
+- **About** - Blue circle with "i"
+
+### Technical Details:
+- 16x16 or 32x32 pixel art style
+- Limited Win95 color palette
+- `image-rendering: pixelated` for crisp edges
+- Inline SVG components (no external assets)
+- Reusable `AppIcon` component for consistent rendering
+
 ## 📁 Virtual File System (VFS)
 
 Hybrid navigation structure with desktop shortcuts and virtual folders:
@@ -40,30 +66,29 @@ Hybrid navigation structure with desktop shortcuts and virtual folders:
 ```
 C:/
 ├── Desktop/
-│   ├── Terminal (💻)
-│   ├── Notepad (📝)
-│   ├── Paint (🎨)
-│   ├── Browser (🌐)
-│   ├── My Computer (🖥️)
-│   └── Games/ → /Program Files/Games
-├── Program Files/
+│   ├── Terminal
+│   ├── Notepad
+│   ├── Paint
+│   ├── Browser
+│   └── Games/ → /Programs/Games
+├── Programs/
 │   └── Games/
-│       ├── Minesweeper (💣)
-│       ├── Snake (🐍)
-│       ├── Tetris (🎮)
-│       └── Dino Runner (🦖)
+│       ├── Minesweeper
+│       ├── Snake
+│       ├── Tetris
+│       └── Dino Runner
 └── Settings/
-    └── Control Panel (⚙️)
+    └── Control Panel
 ```
 
 ### Features:
 - **Desktop Icons** - Max 6 items for clean aesthetics (4 apps + Games folder + My Computer)
-- **Games Folder** - Opens FolderViewer showing all games in /Program Files/Games
+- **Games Folder** - Opens FolderViewer showing all games in /Programs/Games
 - **FolderViewer Component** - Win95 Explorer-style file browser with:
-  - Breadcrumb navigation (C: > Program Files > Games)
+  - Breadcrumb navigation (C: > Programs > Games)
   - Toolbar with "Up" button
   - Address bar with clickable path segments
-  - Grid view with icons
+  - Grid view with pixel-art icons
   - Status bar showing object count
   - Single-click to select, double-click to open
 - **Start Menu Integration** - Games folder + individual game shortcuts for quick access

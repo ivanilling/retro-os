@@ -1,16 +1,12 @@
 import React, { useCallback } from 'react';
 import { useWindowStore } from '../store/windowStore';
-import { desktopApps, gamesApps } from '../apps/registry';
+import { getFolderContents } from '../apps/vfs';
+import { appRegistry } from '../apps/registry';
 import DesktopIcon from './DesktopIcon';
+import AppIcon from './icons/AppIcon';
 
-// Иконки на рабочем столе: основные приложения + папка Games + My Computer + Recycle Bin
-// Максимум 6 элементов для чистого вида
-const desktopIcons = [
-  ...desktopApps.slice(0, 4), // Terminal, Notepad, Paint, Browser (4 иконки)
-  gamesApps[0] ? { id: 'games-folder', title: 'Games', icon: '🎮', defaultSize: { w: 600, h: 450 } } : null,
-  { id: 'my-computer', title: 'My Computer', icon: '🖥️', defaultSize: { w: 450, h: 500 } },
-  { id: 'recycle-bin', title: 'Recycle Bin', icon: '🗑️', defaultSize: { w: 400, h: 300 } },
-].filter(Boolean).slice(0, 6); // Максимум 6 иконок
+// Иконки на рабочем столе из VFS
+const desktopContents = getFolderContents('/Desktop');
 
 export default function Desktop() {
   const openWindow = useWindowStore(s => s.openWindow);
@@ -25,16 +21,18 @@ export default function Desktop() {
     }
   }, [closeStartMenu, setSelectedIcon]);
 
-  const handleIconDoubleClick = useCallback((app: any) => {
-    if (app.id === 'my-computer') {
-      openWindow('about', 'About', 'about', app.defaultSize);
-    } else if (app.id === 'recycle-bin') {
-      // Recycle Bin пока не реализован
-      return;
-    } else if (app.id === 'games-folder') {
-      openWindow('games-folder', 'Games', 'games-folder', app.defaultSize);
-    } else {
-      openWindow(app.id, app.title, app.id, app.defaultSize);
+  const handleIconDoubleClick = useCallback((item: any) => {
+    if (item.appId) {
+      if (item.appId === 'games-folder') {
+        // Открываем папку Games
+        openWindow('games-folder', 'Games', 'games-folder', { w: 600, h: 450 });
+      } else {
+        // Открываем приложение
+        const app = appRegistry.find((a: any) => a.id === item.appId);
+        if (app) {
+          openWindow(app.id, app.title, app.id, app.defaultSize);
+        }
+      }
     }
   }, [openWindow]);
 
@@ -48,43 +46,61 @@ export default function Desktop() {
         background: 'linear-gradient(135deg, #008080 0%, #006666 50%, #004d4d 100%)',
       }}
     >
-      {/* Иконки на рабочем столе */}
-      {desktopIcons.map((app, index) => (
-        app && (
-          <DesktopIcon
-            key={app.id}
-            icon={app.icon}
-            label={app.title}
-            appId={app.id}
-            isSelected={selectedIconId === app.id}
-            defaultX={20}
-            defaultY={20 + index * 90}
-            onDoubleClick={() => handleIconDoubleClick(app)}
-          />
-        )
+      {/* Иконки на рабочем столе из VFS */}
+      {desktopContents.map((item, index) => (
+        <DesktopIcon
+          key={item.id}
+          icon={item.icon || 'folder'}
+          label={item.name}
+          appId={item.id}
+          isSelected={selectedIconId === item.id}
+          defaultX={20}
+          defaultY={20 + index * 90}
+          onDoubleClick={() => handleIconDoubleClick(item)}
+        />
       ))}
 
-      {/* SEO контент — скрыт, но доступен для поисковых систем и screen readers */}
+      {/* Дополнительные иконки (My Computer, Recycle Bin) */}
+      <DesktopIcon
+        icon="my-computer"
+        label="My Computer"
+        appId="my-computer"
+        isSelected={selectedIconId === 'my-computer'}
+        defaultX={20}
+        defaultY={20 + desktopContents.length * 90}
+        onDoubleClick={() => openWindow('about', 'About', 'about', { w: 450, h: 500 })}
+      />
+      <DesktopIcon
+        icon="recycle-bin"
+        label="Recycle Bin"
+        appId="recycle-bin"
+        isSelected={selectedIconId === 'recycle-bin'}
+        defaultX={20}
+        defaultY={20 + (desktopContents.length + 1) * 90}
+        onDoubleClick={() => {}}
+      />
+
+      {/* SEO контент */}
       <div className="sr-only" aria-hidden="false">
         <h1>Alex Chen - Full Stack Developer Portfolio</h1>
-        <p>Full-stack developer with 5+ years of experience building modern web applications. Passionate about creating beautiful, performant, and accessible user interfaces.</p>
+        <p>Full-stack developer with 5+ years of experience building modern web applications.</p>
         <section>
           <h2>Projects</h2>
           <ul>
-            <li>Retro OS Portfolio - A Windows 95-inspired portfolio website built with React, TypeScript, and Tailwind CSS. Features a full window management system, terminal emulator, and CRT effects.</li>
-            <li>Cloud Dashboard - Real-time cloud infrastructure monitoring dashboard with live metrics, alerting, and auto-scaling controls. Built for DevOps teams using React, D3.js, WebSocket, and Go.</li>
-            <li>AI Chat Platform - Multi-model AI chat application with conversation history, code generation, and image creation. Features streaming responses and markdown rendering. Built with Next.js, OpenAI, Prisma, and tRPC.</li>
-            <li>E-Commerce Engine - Headless commerce platform with inventory management, order processing, and multi-tenant support. Handles 10k+ orders/day. Built with Node.js, PostgreSQL, Redis, and Stripe.</li>
-            <li>Open Source UI Library - A collection of 50+ accessible, customizable React components with full TypeScript support. 2k+ GitHub stars and growing.</li>
+            <li>Retro OS Portfolio - A Windows 95-inspired portfolio website</li>
+            <li>Cloud Dashboard - Real-time monitoring dashboard</li>
+            <li>AI Chat Platform - GPT-powered chat application</li>
+            <li>E-Commerce Engine - Headless commerce solution</li>
+            <li>Open Source UI Library - React component library</li>
           </ul>
         </section>
         <section>
           <h2>Skills</h2>
-          <p>Languages: TypeScript, JavaScript, Python, Rust. Frontend: React, Vue, Svelte, Tailwind CSS. Backend: Node.js, Express, FastAPI, Go. Database: PostgreSQL, MongoDB, Redis. DevOps: Docker, Kubernetes, AWS, CI/CD. Other: GraphQL, WebSocket, WebRTC.</p>
+          <p>TypeScript, JavaScript, Python, Rust, React, Vue, Svelte, Tailwind CSS, Node.js, Express, FastAPI, Go, PostgreSQL, MongoDB, Redis, Docker, Kubernetes, AWS</p>
         </section>
         <section>
           <h2>Contact</h2>
-          <p>Email: alex@example.com | GitHub: github.com/alexchen | LinkedIn: linkedin.com/in/alexchen | Twitter: @alexchen_dev</p>
+          <p>Email: alex@example.com | GitHub: github.com/alexchen | LinkedIn: linkedin.com/in/alexchen</p>
         </section>
       </div>
     </main>

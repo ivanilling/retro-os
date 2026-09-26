@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { useWindowStore } from '../store/windowStore';
 import { useAudio } from '../hooks/useAudio';
+import AppIcon from './icons/AppIcon';
 
 interface DesktopIconProps {
   icon: string;
@@ -28,10 +29,8 @@ export default function DesktopIcon({ icon, label, appId, isSelected, defaultX, 
     e.preventDefault();
     e.stopPropagation();
     
-    // Устанавливаем selected в store
     setSelectedIcon(appId);
     
-    // Начинаем drag
     dragRef.current = { startX: e.clientX, startY: e.clientY, origX: posX, origY: posY };
     setIsDragging(true);
   }, [appId, posX, posY, setSelectedIcon]);
@@ -39,7 +38,6 @@ export default function DesktopIcon({ icon, label, appId, isSelected, defaultX, 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Устанавливаем selected при клике
     setSelectedIcon(appId);
     playSound('click');
   }, [appId, setSelectedIcon, playSound]);
@@ -76,7 +74,6 @@ export default function DesktopIcon({ icon, label, appId, isSelected, defaultX, 
     const handleMouseUp = () => {
       dragRef.current = null;
       setIsDragging(false);
-      // Сохраняем в localStorage
       try {
         const positions = useWindowStore.getState().iconPositions;
         localStorage.setItem('retro-os-icon-positions', JSON.stringify(positions));
@@ -117,12 +114,12 @@ export default function DesktopIcon({ icon, label, appId, isSelected, defaultX, 
       aria-pressed={isSelected}
       tabIndex={0}
     >
-      <span 
-        className="text-3xl drop-shadow-md group-hover:scale-110 transition-transform pointer-events-none"
+      <div 
+        className="w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform pointer-events-none"
         aria-hidden="true"
       >
-        {icon}
-      </span>
+        <AppIcon name={icon} size={32} />
+      </div>
       <span 
         className={`text-xs text-center mt-1 px-1 rounded pointer-events-none ${
           isSelected ? 'bg-blue-600 text-white' : 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]'

@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { getFolderContents, getNodeByPath, FileSystemNode } from './fileSystem';
+import { getFolderContents, getNodeByPath, buildBreadcrumb, getParentPath, VFSNode } from '../apps/vfs';
 import { useWindowStore } from '../store/windowStore';
-import { appRegistry } from './registry';
+import { appRegistry } from '../apps/registry';
+import AppIcon from '../components/icons/AppIcon';
 
 interface FolderViewerProps {
   path: string;
@@ -14,31 +15,27 @@ export default function FolderViewer({ path, windowId }: FolderViewerProps) {
   const openWindow = useWindowStore(s => s.openWindow);
 
   const contents = getFolderContents(currentPath);
-  const currentNode = getNodeByPath(currentPath);
+  const breadcrumb = buildBreadcrumb(currentPath);
 
-  // Построение breadcrumb
-  const buildBreadcrumb = useCallback(() => {
-    const parts = currentPath.split('/').filter(p => p);
-    const crumbs = [{ name: 'C:', path: '/' }];
-    
-    let currentPathStr = '';
-    for (const part of parts) {
-      currentPathStr += '/' + part;
-      crumbs.push({ name: part, path: currentPathStr });
-    }
-    
-    return crumbs;
+  // Навигация вверх
+  const handleNavigateUp = useCallback(() => {
+    const parentPath = getParentPath(currentPath);
+    setCurrentPath(parentPath);
+    setSelectedItem(null);
   }, [currentPath]);
 
-  const breadcrumb = buildBreadcrumb();
+  // Навигация по breadcrumb
+  const handleBreadcrumbClick = useCallback((path: string) => {
+    setCurrentPath(path);
+    setSelectedItem(null);
+  }, []);
 
   // Обработка двойного клика
-  const handleDoubleClick = useCallback((item: FileSystemNode) => {
+  const handleDoubleClick = useCallback((item: VFSNode) => {
     if (item.type === 'folder') {
       setCurrentPath(item.path);
       setSelectedItem(null);
     } else if (item.type === 'file' && item.appId) {
-      // Найти приложение в registry
       const app = appRegistry.find(a => a.id === item.appId);
       if (app) {
         openWindow(app.id, app.title, app.id, app.defaultSize);
@@ -47,14 +44,8 @@ export default function FolderViewer({ path, windowId }: FolderViewerProps) {
   }, [openWindow]);
 
   // Обработка одинарного клика
-  const handleClick = useCallback((item: FileSystemNode) => {
+  const handleClick = useCallback((item: VFSNode) => {
     setSelectedItem(item.path);
-  }, []);
-
-  // Навигация по breadcrumb
-  const handleBreadcrumbClick = useCallback((path: string) => {
-    setCurrentPath(path);
-    setSelectedItem(null);
   }, []);
 
   return (
@@ -65,20 +56,14 @@ export default function FolderViewer({ path, windowId }: FolderViewerProps) {
         style={{ boxShadow: 'inset 1px 1px 0 #fff, inset -1px -1px 0 #808080' }}
       >
         <button
-          onClick={() => {
-            const parts = currentPath.split('/').filter(p => p);
-            if (parts.length > 0) {
-              parts.pop();
-              setCurrentPath('/' + parts.join('/'));
-              setSelectedItem(null);
-            }
-          }}
+          onClick={handleNavigateUp}
           disabled={currentPath === '/'}
-          className="px-3 py-1 text-xs border-2 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1 text-xs border-2 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           style={{ boxShadow: 'inset 1px 1px 0 #fff, inset -1px -1px 0 #808080' }}
           aria-label="Go up one level"
         >
-          ⬆️ Up
+          <span>⬆️</span>
+          <span>Up</span>
         </button>
       </div>
 
@@ -88,14 +73,15 @@ export default function FolderViewer({ path, windowId }: FolderViewerProps) {
         style={{ boxShadow: 'inset 1px 1px 0 #fff, inset -1px -1px 0 #808080' }}
       >
         <span className="text-xs font-bold">Address:</span>
-        <div className="flex-1 flex items-center gap-1 px-2 py-1 bg-white border-2 border-gray-400 text-xs"
+        <div 
+          className="flex-1 flex items-center gap-1 px-2 py-1 bg-white border-2 border-gray-400 text-xs overflow-x-auto"
           style={{ boxShadow: 'inset 1px 1px 0 #808080, inset -1px -1px 0 #fff' }}
         >
           {breadcrumb.map((crumb, index) => (
             <React.Fragment key={crumb.path}>
               <button
                 onClick={() => handleBreadcrumbClick(crumb.path)}
-                className="text-blue-600 hover:underline cursor-pointer"
+                className="text-blue-600 hover:underline cursor-pointer whitespace-nowrap"
               >
                 {crumb.name}
               </button>
@@ -130,8 +116,8 @@ export default function FolderViewer({ path, windowId }: FolderViewerProps) {
                   }
                 }}
               >
-                <div className="text-4xl mb-1">
-                  {item.type === 'folder' ? '📁' : item.icon || '📄'}
+                <div className="w-8 h-8 flex items-center justify-center mb-1">
+                  <AppIcon name={item.icon || 'folder'} size={32} />
                 </div>
                 <div className="text-xs text-center break-words w-full">
                   {item.name}
