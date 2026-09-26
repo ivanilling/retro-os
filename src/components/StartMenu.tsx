@@ -6,7 +6,7 @@ import { useAudio } from '../hooks/useAudio';
 // Separate apps into categories for the start menu
 const mainApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper'].includes(app.id));
 const utilityApps = appRegistry.filter(app => ['settings', 'about'].includes(app.id));
-const gamesApps = appRegistry.filter(app => app.id === 'minesweeper');
+const gamesApps = appRegistry.filter(app => app.id === 'minesweeper' || app.id === 'snake');
 
 interface MenuItem {
   id: string;

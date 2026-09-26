@@ -58,6 +58,13 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 700, h: 550 },
     component: React.lazy(() => import('../apps/PaintApp')),
   },
+  {
+    id: 'snake',
+    title: 'Snake',
+    icon: '🐍',
+    defaultSize: { w: 450, h: 520 },
+    component: React.lazy(() => import('../apps/SnakeGame')),
+  },
 ];
 
 export function getAppById(id: string): AppDefinition | undefined {

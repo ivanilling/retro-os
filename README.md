@@ -149,6 +149,39 @@ A fully functional Minesweeper implementation with classic Windows 95 aesthetics
 - CSS Grid layout with Windows 95 inset/outset borders
 - Fully accessible with ARIA labels and keyboard navigation
 
+## 🐍 Snake Game
+
+A classic Snake game implementation with smooth 60fps gameplay:
+
+### Features:
+- **HTML5 Canvas Rendering** - Smooth 60fps gameplay using requestAnimationFrame
+- **Delta-time Game Loop** - Consistent speed across different devices
+- **Classic Controls** - Arrow keys to move, P to pause, Space to start/restart
+- **Collision Detection** - Wall collision and self-collision end the game
+- **Score System** - Track current score and high score (persisted to localStorage)
+- **Progressive Difficulty** - Snake speeds up as you eat more food
+- **Win95 Aesthetic** - Green snake, red food, black background with pixelated rendering
+
+### Controls:
+- **Arrow Keys** - Move snake (Up/Down/Left/Right)
+- **P** - Pause/Resume game
+- **Space** - Start new game / Restart after game over
+
+### Game States:
+- **Idle** - Initial state, press Space to start
+- **Playing** - Active gameplay
+- **Paused** - Game paused (press P to resume)
+- **Game Over** - Collision detected, press Space to restart
+
+### Technical Details:
+- Grid-based movement (20x20 grid)
+- useRef for game state to avoid re-renders
+- requestAnimationFrame with delta-time calculation
+- Prevents 180° turns (can't reverse into self)
+- Food spawns only on empty cells
+- ARIA live region announces score changes
+- Keyboard-only accessible
+
 ## 🎨 Paint Application
 
 A MS Paint-like drawing application built with HTML5 Canvas API:
