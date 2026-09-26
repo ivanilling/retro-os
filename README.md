@@ -6,6 +6,33 @@ A production-grade "Retro Operating System" portfolio website built with React 1
 
 Windows 95 / Mac OS 8 hybrid with modern accessibility standards. Pixel-perfect but responsive.
 
+## 💣 Minesweeper Game
+
+A fully functional Minesweeper implementation with classic Windows 95 aesthetics:
+
+### Features:
+- **Classic Gameplay**: 10x10 grid with 15 mines
+- **Left Click**: Reveal cells
+- **Right Click**: Place/remove flags
+- **Smart First Click**: First click never hits a mine
+- **Flood Fill**: Empty cells automatically reveal neighbors
+- **Timer & Counter**: Track time elapsed and flags remaining
+- **Win/Loss Detection**: Automatic game state detection
+- **Performance Optimized**: React.memo for individual cells
+
+### How to Play:
+1. Open Minesweeper from Start Menu → Games
+2. Left-click any cell to start the game
+3. Right-click to flag suspected mines
+4. Numbers indicate adjacent mines (1-8)
+5. Clear all non-mine cells to win!
+
+### Technical Details:
+- Custom `useMinesweeper` hook manages game state
+- Flood fill algorithm for revealing empty areas
+- CSS Grid layout with Windows 95 inset/outset borders
+- Fully accessible with ARIA labels and keyboard navigation
+
 ## ✨ Features
 
 ### Window Management Engine

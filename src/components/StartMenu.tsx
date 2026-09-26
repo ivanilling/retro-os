@@ -4,14 +4,15 @@ import { appRegistry } from '../apps/registry';
 import { useAudio } from '../hooks/useAudio';
 
 // Separate apps into categories for the start menu
-const mainApps = appRegistry.filter(app => !['settings', 'about'].includes(app.id));
+const mainApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper'].includes(app.id));
 const utilityApps = appRegistry.filter(app => ['settings', 'about'].includes(app.id));
+const gamesApps = appRegistry.filter(app => app.id === 'minesweeper');
 
 interface MenuItem {
   id: string;
   label: string;
   icon: string;
-  action: 'app' | 'settings' | 'about' | 'separator' | 'shutdown';
+  action: 'app' | 'settings' | 'about' | 'games' | 'separator' | 'shutdown';
   appId?: string;
   title?: string;
   defaultSize?: { w: number; h: number };
@@ -28,6 +29,16 @@ const menuItems: MenuItem[] = [
     defaultSize: app.defaultSize,
   })),
   { id: 'sep1', label: '', icon: '', action: 'separator' },
+  ...gamesApps.map(app => ({
+    id: app.id,
+    label: app.title,
+    icon: app.icon,
+    action: 'games' as const,
+    appId: app.id,
+    title: app.title,
+    defaultSize: app.defaultSize,
+  })),
+  { id: 'sep2', label: '', icon: '', action: 'separator' },
   ...utilityApps.map(app => ({
     id: app.id,
     label: app.title,
@@ -37,7 +48,7 @@ const menuItems: MenuItem[] = [
     title: app.title,
     defaultSize: app.defaultSize,
   })),
-  { id: 'sep2', label: '', icon: '', action: 'separator' },
+  { id: 'sep3', label: '', icon: '', action: 'separator' },
   { id: 'shutdown', label: 'Shut Down...', icon: '⏻', action: 'shutdown' },
 ];
 

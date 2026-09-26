@@ -97,7 +97,8 @@ export default function Taskbar() {
                 win.appId === 'image-viewer' ? '🖼️' :
                 win.appId === 'browser' ? '🌐' :
                 win.appId === 'settings' ? '⚙️' :
-                win.appId === 'about' ? 'ℹ️' : '📁'
+                win.appId === 'about' ? 'ℹ️' :
+                win.appId === 'minesweeper' ? '💣' : '📁'
               }</span>
               <span className="truncate">{win.title}</span>
             </button>
