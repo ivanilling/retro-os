@@ -4,6 +4,20 @@ interface BrowserProps {
   windowId?: string;
 }
 
+// Домены, которые блокируют iframe
+const BLOCKED_DOMAINS = [
+  'google.com',
+  'youtube.com',
+  'facebook.com',
+  'twitter.com',
+  'x.com',
+  'instagram.com',
+  'linkedin.com',
+  'reddit.com',
+  'amazon.com',
+  'netflix.com',
+];
+
 const bookmarks = [
   { name: 'Wikipedia', url: 'https://en.wikipedia.org' },
   { name: 'MDN', url: 'https://developer.mozilla.org' },
@@ -18,12 +32,33 @@ export default function Browser({ windowId }: BrowserProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFallback, setShowFallback] = useState(false);
 
+  // Проверка, блокирует ли домен iframe
+  const isBlockedDomain = (urlString: string): boolean => {
+    try {
+      const domain = new URL(urlString).hostname.replace('www.', '');
+      return BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
+    } catch {
+      return false;
+    }
+  };
+
   const handleNavigate = (e: React.FormEvent) => {
     e.preventDefault();
     let newUrl = inputUrl;
     if (!newUrl.startsWith('http://') && !newUrl.startsWith('https://')) {
       newUrl = 'https://' + newUrl;
     }
+    
+    // Проверка на заблокированные домены
+    if (isBlockedDomain(newUrl)) {
+      setUrl(newUrl);
+      setInputUrl(newUrl);
+      setShowFallback(true);
+      setHasError(false);
+      setIsLoading(false);
+      return;
+    }
+    
     setUrl(newUrl);
     setInputUrl(newUrl);
     setIsLoading(true);
@@ -49,7 +84,7 @@ export default function Browser({ windowId }: BrowserProps) {
     setShowFallback(true);
   };
 
-  const handleOpenInNewTab = () => {
+  const handleOpenExternal = () => {
     window.open(url, '_blank');
   };
 
@@ -68,7 +103,11 @@ export default function Browser({ windowId }: BrowserProps) {
         <form onSubmit={handleNavigate} className="flex gap-2 mb-2">
           <button
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              setHasError(false);
+              setShowFallback(false);
+              setIsLoading(true);
+            }}
             className="px-3 py-1 bg-gray-200 border-2 text-xs hover:bg-gray-300"
             style={{ boxShadow: 'inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080' }}
           >
@@ -76,12 +115,12 @@ export default function Browser({ windowId }: BrowserProps) {
           </button>
           <button
             type="button"
-            onClick={handleOpenInNewTab}
+            onClick={handleOpenExternal}
             className="px-3 py-1 bg-blue-500 text-white border-2 text-xs hover:bg-blue-600"
             style={{ boxShadow: 'inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080' }}
-            title="Open in new tab"
+            title="Open in external browser"
           >
-            ↗️ New Tab
+            ↗️ Open External
           </button>
           <div className="flex-1 flex items-center bg-white border-2 px-2">
             <span className="text-xs text-gray-500 mr-1">🔒</span>
@@ -136,7 +175,9 @@ export default function Browser({ windowId }: BrowserProps) {
                 Retro Search Engine
               </h2>
               <p className="text-sm text-gray-600 mb-4">
-                This site cannot be displayed in a frame. Use our search engine or open in a new tab.
+                {hasError 
+                  ? 'This site cannot be displayed in a frame.'
+                  : 'This site blocks embedded browsers.'}
               </p>
               
               {/* Search Form */}
@@ -162,11 +203,11 @@ export default function Browser({ windowId }: BrowserProps) {
 
               <div className="space-y-2">
                 <button
-                  onClick={handleOpenInNewTab}
+                  onClick={handleOpenExternal}
                   className="w-full px-4 py-2 bg-green-500 text-white border-2 text-sm hover:bg-green-600"
                   style={{ boxShadow: 'inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080' }}
                 >
-                  ↗️ Open {url} in New Tab
+                  ↗️ Open {new URL(url).hostname} in New Tab
                 </button>
                 
                 <div className="text-xs text-gray-500 mt-4">
@@ -195,7 +236,7 @@ export default function Browser({ windowId }: BrowserProps) {
                 The website <strong>{url}</strong> has X-Frame-Options set to DENY or SAMEORIGIN.
               </p>
               <button
-                onClick={handleOpenInNewTab}
+                onClick={handleOpenExternal}
                 className="px-4 py-2 bg-blue-500 text-white text-sm hover:bg-blue-600"
               >
                 Open in new tab →

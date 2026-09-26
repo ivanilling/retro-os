@@ -7,14 +7,19 @@ interface BootSequenceProps {
 const BIOS_LINES = [
   'AMIBIOS (C) 1995 American Megatrends Inc.',
   'BIOS Date 01/15/95 14:22:51 Ver: 1.02',
-  '',
   'CPU: Intel 486DX2-66',
+  'Speed: 66 MHz',
   'Memory Test: 640K OK',
   '',
   'Detecting Primary Master ... [HDD 540MB]',
   'Detecting Primary Slave  ... [None]',
+  'Detecting Secondary Master ... [CD-ROM DRIVE]',
   '',
-  'Loading RETRO OS v1.0...',
+  'Initializing USB Controllers .. Done.',
+  'Loading VGA Drivers ............ Done.',
+  'Mounting Virtual File System ... Done.',
+  '',
+  'Starting RETRO OS v1.0...',
 ];
 
 export default function BootSequence({ onComplete }: BootSequenceProps) {
@@ -22,7 +27,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
   const [showCursor, setShowCursor] = useState(false);
   const [phase, setPhase] = useState<'bios' | 'cursor' | 'fade'>('bios');
 
-  // BIOS phase - line by line animation
+  // BIOS phase - line by line animation (50ms delay)
   useEffect(() => {
     if (phase !== 'bios') return;
 
@@ -36,19 +41,19 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         setShowCursor(true);
         setPhase('cursor');
       }
-    }, 200);
+    }, 50);
 
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Cursor phase - 3 seconds then fade
+  // Cursor phase - 2 seconds then fade
   useEffect(() => {
     if (phase !== 'cursor') return;
 
     const timeout = setTimeout(() => {
       setPhase('fade');
       setTimeout(onComplete, 500);
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timeout);
   }, [phase, onComplete]);
@@ -58,16 +63,25 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
       className={`fixed inset-0 z-[99999] flex items-start justify-start p-8 transition-opacity duration-500 ${
         phase === 'fade' ? 'opacity-0' : 'opacity-100'
       }`}
-      style={{ backgroundColor: '#000' }}
+      style={{ backgroundColor: '#000000' }}
     >
-      <div className="font-mono text-white text-sm leading-relaxed">
+      <div 
+        className="text-sm leading-relaxed"
+        style={{ 
+          fontFamily: "'VT323', 'Courier New', monospace",
+          color: '#33FF33',
+        }}
+      >
         {visibleLines.map((line, index) => (
           <div key={index} className="whitespace-pre">
             {line || '\u00A0'}
           </div>
         ))}
         {showCursor && (
-          <span className="inline-block w-2 h-4 bg-white animate-pulse ml-1" />
+          <span 
+            className="inline-block w-2 h-4 animate-pulse ml-1"
+            style={{ backgroundColor: '#33FF33' }}
+          />
         )}
       </div>
     </div>
