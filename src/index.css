@@ -1,1 +1,232 @@
 @import "tailwindcss";
+
+/* ============================================
+   RETRO OS - Global Styles
+   Windows 95 / Mac OS 8 Hybrid Theme
+   ============================================ */
+
+:root {
+  --color-desktop: #008080;
+  --color-titlebar: #0a246a;
+  --color-titlebar-active: linear-gradient(180deg, #0a246a 0%, #3a6ea5 50%, #0a246a 100%);
+  --color-taskbar: #c0c0c0;
+  --color-window-bg: #c0c0c0;
+  --color-border-light: #ffffff;
+  --color-border-dark: #808080;
+  --font-system: 'Segoe UI', 'MS Sans Serif', 'Microsoft Sans Serif', Geneva, sans-serif;
+  --font-mono: 'Courier New', 'Lucida Console', Monaco, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-system);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling for retro feel */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  border: 1px solid #808080;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 2px outset #e0e0e0;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d0d0d0;
+}
+
+::-webkit-scrollbar-button {
+  background: #c0c0c0;
+  border: 2px outset #e0e0e0;
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================
+   CRT Effects
+   ============================================ */
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+}
+
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+}
+
+.crt-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+.crt-flicker {
+  animation: crt-flicker 0.15s infinite alternate;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0; }
+  50% { opacity: 0.01; }
+  100% { opacity: 0.02; }
+}
+
+/* ============================================
+   Retro Button Styles
+   ============================================ */
+
+.retro-button {
+  background: #c0c0c0;
+  border: none;
+  box-shadow: 
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #808080,
+    inset 2px 2px 0 #dfdfdf,
+    inset -2px -2px 0 #404040;
+  padding: 4px 12px;
+  font-family: var(--font-system);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.retro-button:active {
+  box-shadow: 
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #404040;
+}
+
+.retro-button:focus-visible {
+  outline: 2px dotted #000;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Retro Input Styles
+   ============================================ */
+
+.retro-input {
+  background: #ffffff;
+  border: none;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+  padding: 4px 6px;
+  font-family: var(--font-system);
+  font-size: 12px;
+}
+
+.retro-input:focus {
+  outline: none;
+  box-shadow: inset 1px 1px 0 #000080, inset -1px -1px 0 #ffffff;
+}
+
+/* ============================================
+   Window Styles
+   ============================================ */
+
+.retro-window {
+  background: var(--color-window-bg);
+  box-shadow: 
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #808080,
+    inset 2px 2px 0 #dfdfdf,
+    inset -2px -2px 0 #404040;
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible styles */
+*:focus-visible {
+  outline: 2px solid #0000ff;
+  outline-offset: 1px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .crt-flicker {
+    animation: none !important;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 768px) {
+  .crt-scanlines {
+    opacity: 0.3;
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+}
+
+/* Pixel-perfect borders */
+.pixel-border {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Custom selection color */
+::selection {
+  background: #000080;
+  color: #ffffff;
+}
