@@ -56,6 +56,14 @@ export const vfs: VFSNode = {
           appId: 'browser',
         },
         {
+          id: 'music-player',
+          name: 'Music Player',
+          type: 'file',
+          path: '/Desktop/Music Player',
+          icon: 'music-player',
+          appId: 'music-player',
+        },
+        {
           id: 'games-folder',
           name: 'Games',
           type: 'folder',

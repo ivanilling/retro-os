@@ -351,3 +351,24 @@ export const AboutIcon: React.FC<IconProps> = ({ size = 16, className }) => (
     <rect x="7" y="8" width="2" height="4" fill="#ffffff" />
   </svg>
 );
+
+// Music Player Icon - 16x16 pixel art
+export const MusicPlayerIcon: React.FC<IconProps> = ({ size = 16, className }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    className={className}
+    style={{ imageRendering: 'pixelated' }}
+  >
+    {/* CD/Disc */}
+    <rect x="3" y="3" width="10" height="10" fill="#c0c0c0" />
+    <rect x="4" y="4" width="8" height="8" fill="#808080" />
+    <rect x="6" y="6" width="4" height="4" fill="#000000" />
+    <rect x="7" y="7" width="2" height="2" fill="#c0c0c0" />
+    {/* Musical note */}
+    <rect x="11" y="2" width="1" height="5" fill="#000000" />
+    <rect x="12" y="2" width="2" height="2" fill="#000000" />
+    <rect x="10" y="6" width="3" height="2" fill="#000000" />
+  </svg>
+);

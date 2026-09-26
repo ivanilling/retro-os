@@ -82,6 +82,14 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 600, h: 450 },
     component: React.lazy(() => import('../apps/GamesFolder')),
   },
+  // Music Player
+  {
+    id: 'music-player',
+    title: 'Music Player',
+    icon: '🎵',
+    defaultSize: { w: 450, h: 550 },
+    component: React.lazy(() => import('../apps/MusicPlayer')),
+  },
 ];
 
 // Приложения для рабочего стола (максимум 6)

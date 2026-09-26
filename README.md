@@ -32,6 +32,53 @@ Windows 95 Explorer-style file browser for navigating the virtual file system:
 - Responsive grid layout
 - Accessible with ARIA labels and keyboard support
 
+## 🎵 Music Player ("Radiohead Lo-Fi Station")
+
+A Winamp/WMP9-inspired music player with procedural retro noise generation:
+
+### Features:
+- **Procedural Audio Engine** - Pink noise + vinyl crackles generated via Web Audio API (no external audio files needed)
+- **LCD Display** - Green-on-black display showing track name, artist, album, and time
+- **Album Art** - Pixelated cover images with retro CSS filters (`contrast(1.2) saturate(0.8)`)
+- **Visualizer** - 5-bar CSS equalizer bouncing during playback
+- **Controls** - Play/Pause, Next/Prev, Loop toggle
+- **Dual Volume Control**:
+  - Music Volume (0-100%) - independent track volume
+  - Atmosphere Slider (0-100%) - controls procedural noise level
+- **Progress Bar** - Seekable with time display
+- **Playlist** - Scrollable track list with highlighting
+
+### Audio Engine (No External Files Required):
+- **Pink Noise** - Generated via Voss-McCartney algorithm, filtered through BiquadFilterNode (lowpass @ 800Hz)
+- **Vinyl Crackle** - Random short bursts of noise at irregular intervals (100-2000ms)
+- **Mixing** - Separate GainNodes for music and noise, default 100% music / 12% noise
+
+### Playlist Structure:
+```typescript
+interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  duration: string;
+  audioSrc: string;  // Explicitly linked to cover
+  coverSrc: string;  // Explicitly linked to audio
+}
+```
+
+### Adding Real Music:
+1. Place audio files in `/public/audio/` (creep.mp3, just.mp3, etc.)
+2. Place cover images in `/public/covers/` (300x300px recommended)
+3. Update paths in `src/data/playlist.ts`
+4. The player will automatically load and display them
+
+### Technical Details:
+- `useRetroNoise` hook for procedural audio generation
+- AudioContext with BiquadFilterNode for noise shaping
+- Separate gain nodes for independent volume control
+- CSS animations for equalizer visualization
+- Fallback pixel-art icon if cover fails to load
+
 ## 🎨 Custom Pixel-Art Icons
 
 All emoji icons have been replaced with custom pixel-art SVG icons:
@@ -181,6 +228,11 @@ Authentic BIOS-style boot animation:
 ## 💻 Enhanced Terminal
 
 A fully-featured terminal emulator with advanced commands and visual effects:
+
+### Matrix Effect Fix:
+- **Bug Fixed** - Matrix canvas no longer overlaps text input
+- **Solution** - Canvas z-index: 0, text container z-index: 10 with background rgba(0,0,0,0.85)
+- **Result** - Text remains fully readable while Matrix effect plays behind
 
 ### New Commands:
 - **neofetch** - Display ASCII art laptop with system information (OS, Kernel, Resolution, etc.)

@@ -13,6 +13,7 @@ import {
   DinoIcon,
   SettingsIcon,
   AboutIcon,
+  MusicPlayerIcon,
 } from './PixelIcons';
 
 interface AppIconProps {
@@ -35,6 +36,7 @@ const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> =
   dino: DinoIcon,
   settings: SettingsIcon,
   about: AboutIcon,
+  'music-player': MusicPlayerIcon,
   folder: GamesFolderIcon, // Default folder icon
 };
 

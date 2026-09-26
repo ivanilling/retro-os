@@ -210,17 +210,18 @@ export default function Terminal({ windowId }: TerminalProps) {
       role="main"
       aria-label="Terminal application"
     >
-      {/* Matrix overlay */}
+      {/* Matrix overlay - z-index: 0, behind text */}
       {isMatrixActive && (
         <canvas
           ref={matrixCanvasRef}
           className="absolute inset-0 pointer-events-none opacity-30"
+          style={{ zIndex: 0 }}
           aria-hidden="true"
         />
       )}
 
-      {/* Terminal content */}
-      <div className="relative z-10">
+      {/* Terminal content - z-index: 10, with background for readability */}
+      <div className="relative bg-black/85 p-2 -m-2" style={{ zIndex: 10 }}>
         {lines.map((line, index) => (
           <div 
             key={index} 
