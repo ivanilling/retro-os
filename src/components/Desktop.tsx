@@ -1,10 +1,16 @@
 import React, { useCallback } from 'react';
 import { useWindowStore } from '../store/windowStore';
-import { appRegistry } from '../apps/registry';
+import { desktopApps, gamesApps } from '../apps/registry';
 import DesktopIcon from './DesktopIcon';
 
-// Показываем только основные приложения на рабочем столе (не settings/about/minesweeper/paint)
-const desktopApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper', 'paint'].includes(app.id));
+// Иконки на рабочем столе: основные приложения + папка Games + My Computer + Recycle Bin
+// Максимум 6 элементов для чистого вида
+const desktopIcons = [
+  ...desktopApps.slice(0, 4), // Terminal, Notepad, Paint, Browser (4 иконки)
+  gamesApps[0] ? { id: 'games-folder', title: 'Games', icon: '🎮', defaultSize: { w: 600, h: 450 } } : null,
+  { id: 'my-computer', title: 'My Computer', icon: '🖥️', defaultSize: { w: 450, h: 500 } },
+  { id: 'recycle-bin', title: 'Recycle Bin', icon: '🗑️', defaultSize: { w: 400, h: 300 } },
+].filter(Boolean).slice(0, 6); // Максимум 6 иконок
 
 export default function Desktop() {
   const openWindow = useWindowStore(s => s.openWindow);
@@ -15,10 +21,22 @@ export default function Desktop() {
   const handleDesktopClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeStartMenu();
-      // Снимаем выделение с иконок при клике на пустое место
       setSelectedIcon(null);
     }
   }, [closeStartMenu, setSelectedIcon]);
+
+  const handleIconDoubleClick = useCallback((app: any) => {
+    if (app.id === 'my-computer') {
+      openWindow('about', 'About', 'about', app.defaultSize);
+    } else if (app.id === 'recycle-bin') {
+      // Recycle Bin пока не реализован
+      return;
+    } else if (app.id === 'games-folder') {
+      openWindow('games-folder', 'Games', 'games-folder', app.defaultSize);
+    } else {
+      openWindow(app.id, app.title, app.id, app.defaultSize);
+    }
+  }, [openWindow]);
 
   return (
     <main
@@ -30,39 +48,21 @@ export default function Desktop() {
         background: 'linear-gradient(135deg, #008080 0%, #006666 50%, #004d4d 100%)',
       }}
     >
-      {/* Иконки приложений */}
-      {desktopApps.map((app, index) => (
-        <DesktopIcon
-          key={app.id}
-          icon={app.icon}
-          label={app.title}
-          appId={app.id}
-          isSelected={selectedIconId === app.id}
-          defaultX={20}
-          defaultY={20 + index * 90}
-          onDoubleClick={() => openWindow(app.id, app.title, app.id, app.defaultSize)}
-        />
+      {/* Иконки на рабочем столе */}
+      {desktopIcons.map((app, index) => (
+        app && (
+          <DesktopIcon
+            key={app.id}
+            icon={app.icon}
+            label={app.title}
+            appId={app.id}
+            isSelected={selectedIconId === app.id}
+            defaultX={20}
+            defaultY={20 + index * 90}
+            onDoubleClick={() => handleIconDoubleClick(app)}
+          />
+        )
       ))}
-
-      {/* Дополнительные иконки */}
-      <DesktopIcon
-        icon="🖥️"
-        label="My Computer"
-        appId="my-computer"
-        isSelected={selectedIconId === 'my-computer'}
-        defaultX={20}
-        defaultY={20 + desktopApps.length * 90}
-        onDoubleClick={() => openWindow('about', 'About', 'about', { w: 450, h: 500 })}
-      />
-      <DesktopIcon
-        icon="🗑️"
-        label="Recycle Bin"
-        appId="recycle-bin"
-        isSelected={selectedIconId === 'recycle-bin'}
-        defaultX={20}
-        defaultY={20 + (desktopApps.length + 1) * 90}
-        onDoubleClick={() => {}}
-      />
 
       {/* SEO контент — скрыт, но доступен для поисковых систем и screen readers */}
       <div className="sr-only" aria-hidden="false">

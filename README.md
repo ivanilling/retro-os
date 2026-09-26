@@ -6,6 +6,68 @@ A production-grade "Retro Operating System" portfolio website built with React 1
 
 Windows 95 / Mac OS 8 hybrid with modern accessibility standards. Pixel-perfect but responsive.
 
+## 📁 FolderViewer Component
+
+Windows 95 Explorer-style file browser for navigating the virtual file system:
+
+### Features:
+- **Breadcrumb Navigation** - Clickable path segments (C: > Program Files > Games)
+- **Toolbar** - "Up" button to navigate to parent folder
+- **Address Bar** - Shows current path with clickable segments
+- **Grid View** - Icons displayed in 4-column grid
+- **Selection** - Single-click to select, double-click to open
+- **Status Bar** - Shows object count and selected item
+- **Keyboard Navigation** - Tab to focus items, Enter to open
+- **Win95 Aesthetic** - Inset/outset borders, gray toolbar, blue selection
+
+### Usage:
+```tsx
+<FolderViewer path="/Program Files/Games" />
+```
+
+### Technical Details:
+- Reads from virtual file system defined in `fileSystem.ts`
+- Supports nested folder navigation
+- Launches apps via window manager on double-click
+- Responsive grid layout
+- Accessible with ARIA labels and keyboard support
+
+## 📁 Virtual File System (VFS)
+
+Hybrid navigation structure with desktop shortcuts and virtual folders:
+
+### Directory Structure:
+```
+C:/
+├── Desktop/
+│   ├── Terminal (💻)
+│   ├── Notepad (📝)
+│   ├── Paint (🎨)
+│   ├── Browser (🌐)
+│   ├── My Computer (🖥️)
+│   └── Games/ → /Program Files/Games
+├── Program Files/
+│   └── Games/
+│       ├── Minesweeper (💣)
+│       ├── Snake (🐍)
+│       ├── Tetris (🎮)
+│       └── Dino Runner (🦖)
+└── Settings/
+    └── Control Panel (⚙️)
+```
+
+### Features:
+- **Desktop Icons** - Max 6 items for clean aesthetics (4 apps + Games folder + My Computer)
+- **Games Folder** - Opens FolderViewer showing all games in /Program Files/Games
+- **FolderViewer Component** - Win95 Explorer-style file browser with:
+  - Breadcrumb navigation (C: > Program Files > Games)
+  - Toolbar with "Up" button
+  - Address bar with clickable path segments
+  - Grid view with icons
+  - Status bar showing object count
+  - Single-click to select, double-click to open
+- **Start Menu Integration** - Games folder + individual game shortcuts for quick access
+
 ## 🔊 Audio System
 
 A complete sound effects system using Web Audio API:

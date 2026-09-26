@@ -1,25 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWindowStore } from '../store/windowStore';
-import { appRegistry } from '../apps/registry';
+import { desktopApps, gamesApps, utilityApps } from '../apps/registry';
 import { useAudio } from '../hooks/useAudio';
-
-// Separate apps into categories for the start menu
-const mainApps = appRegistry.filter(app => !['settings', 'about', 'minesweeper'].includes(app.id));
-const utilityApps = appRegistry.filter(app => ['settings', 'about'].includes(app.id));
-const gamesApps = appRegistry.filter(app => app.id === 'minesweeper' || app.id === 'snake' || app.id === 'tetris' || app.id === 'dino');
 
 interface MenuItem {
   id: string;
   label: string;
   icon: string;
-  action: 'app' | 'settings' | 'about' | 'games' | 'separator' | 'shutdown';
+  action: 'app' | 'folder' | 'settings' | 'about' | 'separator' | 'shutdown';
   appId?: string;
   title?: string;
   defaultSize?: { w: number; h: number };
 }
 
 const menuItems: MenuItem[] = [
-  ...mainApps.map(app => ({
+  // Основные приложения
+  ...desktopApps.map(app => ({
     id: app.id,
     label: app.title,
     icon: app.icon,
@@ -29,16 +25,28 @@ const menuItems: MenuItem[] = [
     defaultSize: app.defaultSize,
   })),
   { id: 'sep1', label: '', icon: '', action: 'separator' },
+  // Папка Games
+  {
+    id: 'games-folder',
+    label: 'Games',
+    icon: '🎮',
+    action: 'folder' as const,
+    appId: 'games-folder',
+    title: 'Games',
+    defaultSize: { w: 600, h: 450 },
+  },
+  // Отдельные игры (для быстрого доступа)
   ...gamesApps.map(app => ({
     id: app.id,
     label: app.title,
     icon: app.icon,
-    action: 'games' as const,
+    action: 'app' as const,
     appId: app.id,
     title: app.title,
     defaultSize: app.defaultSize,
   })),
   { id: 'sep2', label: '', icon: '', action: 'separator' },
+  // Утилиты
   ...utilityApps.map(app => ({
     id: app.id,
     label: app.title,
@@ -129,7 +137,7 @@ export default function StartMenu() {
           className="w-8 flex items-end justify-center pb-2 shrink-0"
           style={{
             background: 'linear-gradient(180deg, #0a246a 0%, #3a6ea5 100%)',
-            minHeight: '320px',
+            minHeight: '400px',
           }}
         >
           <span
@@ -141,7 +149,7 @@ export default function StartMenu() {
         </div>
 
         {/* Menu items */}
-        <div className="flex-1 py-1">
+        <div className="flex-1 py-1 max-h-96 overflow-y-auto">
           {menuItems.map((item) => {
             if (item.action === 'separator') {
               return <div key={item.id} className="border-t border-gray-400 my-1 mx-2" style={{ boxShadow: '0 1px 0 #fff' }} />;

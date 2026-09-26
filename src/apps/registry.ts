@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AppDefinition } from '../types';
 
+// Основные приложения (не игры)
 export const appRegistry: AppDefinition[] = [
   {
     id: 'terminal',
@@ -17,11 +18,11 @@ export const appRegistry: AppDefinition[] = [
     component: React.lazy(() => import('../apps/Notepad')),
   },
   {
-    id: 'image-viewer',
-    title: 'Gallery',
-    icon: '🖼️',
-    defaultSize: { w: 700, h: 500 },
-    component: React.lazy(() => import('../apps/ImageViewer')),
+    id: 'paint',
+    title: 'Paint',
+    icon: '🎨',
+    defaultSize: { w: 700, h: 550 },
+    component: React.lazy(() => import('../apps/PaintApp')),
   },
   {
     id: 'browser',
@@ -44,19 +45,13 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 450, h: 500 },
     component: React.lazy(() => import('../apps/About')),
   },
+  // Игры (отдельная категория)
   {
     id: 'minesweeper',
     title: 'Minesweeper',
     icon: '💣',
     defaultSize: { w: 400, h: 500 },
     component: React.lazy(() => import('../apps/Minesweeper')),
-  },
-  {
-    id: 'paint',
-    title: 'Paint',
-    icon: '🎨',
-    defaultSize: { w: 700, h: 550 },
-    component: React.lazy(() => import('../apps/PaintApp')),
   },
   {
     id: 'snake',
@@ -79,7 +74,30 @@ export const appRegistry: AppDefinition[] = [
     defaultSize: { w: 850, h: 450 },
     component: React.lazy(() => import('../apps/DinoRunGame')),
   },
+  // Games Folder (открывает папку с играми)
+  {
+    id: 'games-folder',
+    title: 'Games',
+    icon: '🎮',
+    defaultSize: { w: 600, h: 450 },
+    component: React.lazy(() => import('../apps/GamesFolder')),
+  },
 ];
+
+// Приложения для рабочего стола (максимум 6)
+export const desktopApps = appRegistry.filter(app => 
+  ['terminal', 'notepad', 'paint', 'browser'].includes(app.id)
+);
+
+// Игры
+export const gamesApps = appRegistry.filter(app => 
+  ['minesweeper', 'snake', 'tetris', 'dino'].includes(app.id)
+);
+
+// Утилиты
+export const utilityApps = appRegistry.filter(app => 
+  ['settings', 'about'].includes(app.id)
+);
 
 export function getAppById(id: string): AppDefinition | undefined {
   return appRegistry.find(app => app.id === id);
