@@ -21,7 +21,6 @@ export default function Terminal({ windowId }: TerminalProps) {
   const [input, setInput] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [isMatrixActive, setIsMatrixActive] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,11 +41,6 @@ export default function Terminal({ windowId }: TerminalProps) {
   // Очистка терминала
   const clearTerminal = useCallback(() => {
     setLines([]);
-  }, []);
-
-  // Переключение Matrix эффекта
-  const toggleMatrix = useCallback(() => {
-    setIsMatrixActive(prev => !prev);
   }, []);
 
   // Получить разрешение окна
@@ -97,7 +91,6 @@ export default function Terminal({ windowId }: TerminalProps) {
     // Создание контекста для команды
     const context: CommandContext = {
       clearTerminal,
-      toggleMatrix,
       getResolution,
     };
 
@@ -112,7 +105,7 @@ export default function Terminal({ windowId }: TerminalProps) {
         content: `Error executing command: ${error}` 
       }]);
     }
-  }, [clearTerminal, toggleMatrix, getResolution]);
+  }, [clearTerminal, getResolution]);
 
   // Обработка клавиши Enter
   const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -154,9 +147,9 @@ export default function Terminal({ windowId }: TerminalProps) {
     }
   }, [input, commandHistory, historyIndex, executeCommand]);
 
-  // Matrix эффект
+  // Matrix эффект - постоянный фон
   useEffect(() => {
-    if (!isMatrixActive || !matrixCanvasRef.current) return;
+    if (!matrixCanvasRef.current) return;
 
     const canvas = matrixCanvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -200,13 +193,13 @@ export default function Terminal({ windowId }: TerminalProps) {
 
     draw();
 
-    // Очистка при размонтировании или деактивации
+    // Очистка при размонтировании
     return () => {
       if (matrixAnimationRef.current) {
         cancelAnimationFrame(matrixAnimationRef.current);
       }
     };
-  }, [isMatrixActive]);
+  }, []);
 
   // Фокус на input при клике
   const handleContainerClick = useCallback(() => {
@@ -221,18 +214,16 @@ export default function Terminal({ windowId }: TerminalProps) {
       role="main"
       aria-label="Terminal application"
     >
-      {/* Matrix overlay - z-index: 0, behind text */}
-      {isMatrixActive && (
-        <canvas
-          ref={matrixCanvasRef}
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{ zIndex: 0 }}
-          aria-hidden="true"
-        />
-      )}
+      {/* Matrix overlay - permanent subtle background */}
+      <canvas
+        ref={matrixCanvasRef}
+        className="absolute inset-0 pointer-events-none opacity-15"
+        style={{ zIndex: 0 }}
+        aria-hidden="true"
+      />
 
       {/* Terminal content - z-index: 10, with background for readability */}
-      <div className="relative bg-black/85 p-2 -m-2" style={{ zIndex: 10 }}>
+      <div className="relative bg-black/85 p-4 -m-4" style={{ zIndex: 10 }}>
         {lines.map((line, index) => (
           <div 
             key={index} 

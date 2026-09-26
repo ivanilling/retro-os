@@ -15,6 +15,7 @@ export default function Desktop() {
   const selectedIconId = useWindowStore(s => s.selectedIconId);
   const setSelectedIcon = useWindowStore(s => s.setSelectedIcon);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleDesktopClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -58,18 +59,20 @@ export default function Desktop() {
       }}
     >
       {/* Иконки на рабочем столе из VFS */}
-      {desktopContents.map((item, index) => (
-        <DesktopIcon
-          key={item.id}
-          icon={item.icon || 'folder'}
-          label={item.name}
-          appId={item.id}
-          isSelected={selectedIconId === item.id}
-          defaultX={20}
-          defaultY={20 + index * 90}
-          onDoubleClick={() => handleIconDoubleClick(item)}
-        />
-      ))}
+      <div key={refreshKey}>
+        {desktopContents.map((item, index) => (
+          <DesktopIcon
+            key={item.id}
+            icon={item.icon || 'folder'}
+            label={item.name}
+            appId={item.id}
+            isSelected={selectedIconId === item.id}
+            defaultX={20}
+            defaultY={20 + index * 90}
+            onDoubleClick={() => handleIconDoubleClick(item)}
+          />
+        ))}
+      </div>
 
       {/* Дополнительные иконки (My Computer, Recycle Bin) */}
       <DesktopIcon
@@ -121,7 +124,7 @@ export default function Desktop() {
           x={contextMenu.x}
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
-          onRefresh={() => window.location.reload()}
+          onRefresh={() => setRefreshKey(prev => prev + 1)}
           onChangeWallpaper={() => {
             // TODO: Implement wallpaper changer
             alert('Wallpaper changer coming soon!');

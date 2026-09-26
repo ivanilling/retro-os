@@ -1,6 +1,5 @@
 export interface CommandContext {
   clearTerminal: () => void;
-  toggleMatrix: () => void;
   getResolution: () => { width: number; height: number };
 }
 
@@ -80,15 +79,7 @@ ${asciiArt}
   },
 };
 
-// Команда: matrix
-const matrixCommand: Command = {
-  name: 'matrix',
-  description: 'Toggle Matrix digital rain effect',
-  execute: async (args, context) => {
-    context.toggleMatrix();
-    return 'Matrix effect toggled. Press "matrix" again to disable.';
-  },
-};
+// Команда: matrix (удалена - теперь постоянный фон)
 
 // Команда: about
 const aboutCommand: Command = {
@@ -221,7 +212,6 @@ export function getAllCommands(): Command[] {
     helpCommand,
     clearCommand,
     neofetchCommand,
-    matrixCommand,
     aboutCommand,
     echoCommand,
     dateCommand,

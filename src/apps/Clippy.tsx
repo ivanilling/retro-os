@@ -49,7 +49,7 @@ export default function Clippy({ windowId }: ClippyProps) {
     }
 
     // Случайное появление каждые 2-5 минут
-    const randomInterval = Math.random() * 180000 + 120000; // 2-5 минут
+    const randomInterval = Math.random() * 180000 + 120000;
     const timeout = setTimeout(() => {
       if (!isVisible) {
         showRandomTip();
@@ -102,38 +102,96 @@ export default function Clippy({ windowId }: ClippyProps) {
         </>
       )}
 
-      {/* Clippy Character (SVG) */}
+      {/* Clippy Character - Proper Paperclip Shape */}
       <div 
         className={`cursor-pointer ${isMinimized ? 'opacity-50 hover:opacity-100' : ''}`}
         onClick={handleMinimize}
       >
-        <svg width="80" height="100" viewBox="0 0 80 100" className="drop-shadow-lg">
-          {/* Body */}
-          <ellipse cx="40" cy="60" rx="25" ry="35" fill="#c0c0c0" stroke="#000" strokeWidth="2"/>
+        <svg width="60" height="80" viewBox="0 0 60 80" className="drop-shadow-lg">
+          {/* Main wire body - outer loop */}
+          <path 
+            d="M 30 10 
+               L 30 5 
+               Q 30 0 35 0 
+               L 50 0 
+               Q 55 0 55 5 
+               L 55 60 
+               Q 55 65 50 65 
+               L 10 65 
+               Q 5 65 5 60 
+               L 5 20 
+               Q 5 15 10 15 
+               L 20 15 
+               Q 25 15 25 20 
+               L 25 55 
+               Q 25 60 30 60 
+               L 45 60 
+               Q 50 60 50 55 
+               L 50 10 
+               Q 50 5 45 5 
+               L 35 5 
+               Q 30 5 30 10 Z"
+            fill="none"
+            stroke="#808080"
+            strokeWidth="3"
+          />
           
-          {/* Eyes */}
-          <circle cx="32" cy="50" r="8" fill="#fff" stroke="#000" strokeWidth="2"/>
-          <circle cx="48" cy="50" r="8" fill="#fff" stroke="#000" strokeWidth="2"/>
-          <circle cx="34" cy="52" r="4" fill="#000"/>
-          <circle cx="50" cy="52" r="4" fill="#000"/>
+          {/* Inner wire loop */}
+          <path 
+            d="M 30 15 
+               L 30 12 
+               Q 30 10 32 10 
+               L 42 10 
+               Q 45 10 45 12 
+               L 45 50 
+               Q 45 52 42 52 
+               L 18 52 
+               Q 15 52 15 50 
+               L 15 25 
+               Q 15 22 18 22 
+               L 22 22 
+               Q 25 22 25 25 
+               L 25 45 
+               Q 25 48 28 48 
+               L 38 48 
+               Q 40 48 40 45 
+               L 40 18 
+               Q 40 15 38 15 
+               L 32 15 
+               Q 30 15 30 18 Z"
+            fill="none"
+            stroke="#a0a0a0"
+            strokeWidth="2"
+          />
+
+          {/* Eyes on the wire loops */}
+          {/* Left eye - on outer loop */}
+          <circle cx="15" cy="35" r="5" fill="#fff" stroke="#000" strokeWidth="1"/>
+          <circle cx="16" cy="36" r="2.5" fill="#000"/>
           
-          {/* Eyebrows */}
-          <path d="M 25 42 Q 32 38 39 42" stroke="#000" strokeWidth="2" fill="none"/>
-          <path d="M 41 42 Q 48 38 55 42" stroke="#000" strokeWidth="2" fill="none"/>
+          {/* Right eye - on outer loop */}
+          <circle cx="45" cy="35" r="5" fill="#fff" stroke="#000" strokeWidth="1"/>
+          <circle cx="46" cy="36" r="2.5" fill="#000"/>
           
-          {/* Mouth */}
-          <path d="M 30 65 Q 40 70 50 65" stroke="#000" strokeWidth="2" fill="none"/>
+          {/* Animated eyebrows */}
+          <path d="M 10 28 Q 15 25 20 28" stroke="#000" strokeWidth="2" fill="none">
+            <animate attributeName="d" 
+                     values="M 10 28 Q 15 25 20 28;M 10 30 Q 15 27 20 30;M 10 28 Q 15 25 20 28" 
+                     dur="3s" 
+                     repeatCount="indefinite"/>
+          </path>
+          <path d="M 40 28 Q 45 25 50 28" stroke="#000" strokeWidth="2" fill="none">
+            <animate attributeName="d" 
+                     values="M 40 28 Q 45 25 50 28;M 40 30 Q 45 27 50 30;M 40 28 Q 45 25 50 28" 
+                     dur="3s" 
+                     repeatCount="indefinite"/>
+          </path>
           
-          {/* Paperclip top */}
-          <path d="M 40 25 L 40 15 Q 40 10 45 10 L 55 10 Q 60 10 60 15 L 60 35" 
-                stroke="#808080" strokeWidth="3" fill="none"/>
+          {/* Mouth - small smile */}
+          <path d="M 25 42 Q 30 45 35 42" stroke="#000" strokeWidth="1.5" fill="none"/>
           
-          {/* Paperclip bottom */}
-          <path d="M 40 85 L 40 95 Q 40 100 35 100 L 25 100 Q 20 100 20 95 L 20 75" 
-                stroke="#808080" strokeWidth="3" fill="none"/>
-          
-          {/* Shine */}
-          <ellipse cx="35" cy="45" rx="3" ry="5" fill="#fff" opacity="0.5"/>
+          {/* Shine effect */}
+          <ellipse cx="20" cy="30" rx="2" ry="3" fill="#fff" opacity="0.6"/>
         </svg>
       </div>
     </div>

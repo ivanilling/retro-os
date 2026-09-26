@@ -117,11 +117,8 @@ export default function App() {
   }, []);
 
   const handleBSODReboot = useCallback(() => {
-    setIsBSODActive(false);
-    // Reset all windows
-    useWindowStore.getState().windows.forEach(w => {
-      useWindowStore.getState().closeWindow(w.id);
-    });
+    // BSOD теперь сам делает window.location.reload()
+    // Эта функция больше не нужна, но оставим для совместимости
   }, []);
 
   return (

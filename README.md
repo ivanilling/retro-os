@@ -56,10 +56,15 @@ Classic Windows 95-style calculator with full keyboard support:
 
 ## 📎 Clippy Assistant
 
-Animated Office Assistant that appears to help users:
+Animated Office Assistant with proper paperclip wire shape:
+
+### Visual Design:
+- **Bent Wire Paperclip** - Double-loop wire shape (not an egg!)
+- **Eyes on Wire Loops** - Positioned ON the wire, not floating on a body
+- **Animated Eyebrows** - Expressive eyebrows that move (SVG animation)
+- **Proper Proportions** - Authentic paperclip geometry
 
 ### Features:
-- **Animated SVG Character** - Paperclip-style assistant with eyes and eyebrows
 - **Smart Appearance** - Appears after 30 seconds of inactivity or randomly every 2-5 minutes
 - **Helpful Tips** - Random tips about using the OS
   - "Looks like you're coding a portfolio. Need help?"
@@ -70,38 +75,49 @@ Animated Office Assistant that appears to help users:
 - **Dismissible** - Click X button to close
 - **Minimizable** - Click Clippy to minimize/restore
 
-### Tips Include:
-- Portfolio coding help
-- Game suggestions
-- Window management tips
-- Terminal commands
-- Desktop shortcuts
+### Technical Details:
+- SVG paths for precise wire shape
+- Eyes positioned on outer wire loops
+- Animated eyebrows using SVG `<animate>` element
+- Shine effect for 3D appearance
+- Drop shadow for depth
 
 ## 💙 BSOD (Blue Screen of Death)
 
-Classic Windows blue screen easter egg:
+Scary and realistic Windows blue screen with audio:
 
 ### Trigger Methods:
 1. **Terminal Command** - Type `sudo crash` in Terminal
-2. **Hidden Click Zone** - (Coming soon)
 
-### Features:
+### Visual Design:
 - **Full-Screen Overlay** - Classic blue background (#0000AA)
-- **White Text** - Error message with technical details
+- **White Pixel Font** - Courier New monospace
+- **Static Text** - NO animations (authentic BSOD experience)
 - **Error Code** - STOP: 0x000000D1 (DRIVER_IRQL_NOT_LESS_OR_EQUAL)
-- **Countdown** - Auto-reboot after 5 seconds
-- **Fade Animation** - Smooth fade-in effect
-- **System Reset** - Closes all windows on reboot
+
+### Audio (Critical):
+- **Hard Drive Error Sound** - 0.5s loop of broken/stutter sound
+- **Square Wave Oscillator** - 80Hz base frequency
+- **LFO Modulation** - 15Hz for "broken" stutter effect
+- **Volume** - 15% gain for jarring experience
+- **Auto-Stop** - Sound stops 0.5s before reboot
+
+### Behavior:
+- **Instant UI Freeze** - Disables all mouse/keyboard events
+- **No Escape** - Cannot be dismissed manually
+- **Auto-Reload** - `window.location.reload()` after 5 seconds
+- **Physical Memory Dump** - Authentic error messages
 
 ### Technical Details:
-- Triggered via custom event `trigger-bsod`
-- 5-second countdown with visual feedback
-- Automatic system state reset
-- Cannot be dismissed manually (authentic BSOD experience!)
+- Web Audio API for procedural sound generation
+- LFO (Low Frequency Oscillator) for stutter effect
+- Event listeners with `capture: true` to freeze UI
+- Automatic page reload simulates real reboot
+- Cursor set to `none` for complete freeze
 
 ## 🖱️ Context Menu
 
-Custom right-click menu for the desktop:
+Custom right-click menu for the desktop with smart refresh:
 
 ### Features:
 - **Dynamic Positioning** - Appears at mouse cursor location
@@ -110,10 +126,16 @@ Custom right-click menu for the desktop:
 - **Keyboard Support** - Press Escape to close
 
 ### Menu Items:
-- **🔄 Refresh** - Reload the desktop
+- **🔄 Refresh** - Re-render desktop icons from VFS state (NO page reload!)
 - **🖼️ Change Wallpaper** - (Coming soon)
 - **📁 New Folder** - (Coming soon)
 - **⚙️ Properties** - Open Settings window
+
+### Smart Refresh:
+- **No Page Reload** - Uses React state to force re-render
+- **VFS Integration** - Reads fresh data from virtual file system
+- **Instant Update** - Icons refresh immediately without flicker
+- **State Preservation** - Window positions and states preserved
 
 ### Usage:
 - Right-click on empty desktop area
@@ -121,9 +143,15 @@ Custom right-click menu for the desktop:
 - Click outside menu to close
 - Press Escape to dismiss
 
-## 🌐 Browser (Upgraded)
+### Technical Details:
+- `refreshKey` state forces component re-render
+- Desktop icons read from VFS on each render
+- No `window.location.reload()` needed
+- Preserves all window states and positions
 
-Enhanced browser with iframe support and error handling:
+## 🌐 Browser (Smart Fallback)
+
+Enhanced browser with intelligent fallback for blocked sites:
 
 ### Features:
 - **Iframe Rendering** - Load websites in embedded frame
@@ -132,24 +160,46 @@ Enhanced browser with iframe support and error handling:
   - Wikipedia
   - MDN Web Docs
   - GitHub
-- **Error Handling** - Graceful handling of X-Frame-Options errors
-  - Shows "This site refuses to be framed" message
-  - Provides "Open in new tab" link
+- **Smart Fallback** - "Retro Search Engine" when iframe fails
+- **Open in New Tab** - Permanent button in toolbar
+- **Search Engine** - Built-in search bar (opens in new tab)
 - **Loading State** - Visual feedback during page load
 - **Security** - Sandboxed iframe with limited permissions
 
-### Error Handling:
-When a website blocks iframe embedding (X-Frame-Options: DENY):
-- Shows friendly error message
-- Displays the problematic URL
-- Provides direct link to open in new tab
-- No broken iframe or blank screen
+### Smart Browser Logic:
+1. **Try iframe** - Attempt to load URL in embedded frame
+2. **Detect failure** - If X-Frame-Options blocks or error occurs
+3. **Show fallback** - Display "Retro Search Engine" UI
+4. **Search opens in new tab** - All searches use `window.open()`
+5. **Direct links** - "Open in New Tab" button always available
+
+### Fallback UI:
+When a site blocks iframe embedding:
+- Shows "Retro Search Engine" with search bar
+- Search results open in NEW TAB (not iframe)
+- "Open [URL] in New Tab" button for direct access
+- Quick links to bookmarked sites
+- Friendly error message explaining the issue
+
+### Toolbar Features:
+- **Refresh** - Reload current page
+- **New Tab** - Open current URL in new browser tab
+- **Address Bar** - Enter any URL
+- **Go** - Navigate to URL
+- **Bookmarks** - Quick access buttons
 
 ### Bookmarks:
 Pre-loaded safe sites that allow framing:
 - Wikipedia (en.wikipedia.org)
 - MDN Web Docs (developer.mozilla.org)
 - GitHub (github.com)
+
+### Technical Details:
+- `sandbox` attribute for security
+- `onError` handler for iframe failures
+- `window.open(url, '_blank')` for new tab
+- Search uses Google with URL encoding
+- Graceful degradation for all sites
 
 ## 🎵 Music Player ("Radiohead Lo-Fi Station")
 
@@ -304,27 +354,37 @@ Classic "Flying Windows" screensaver with idle detection:
 
 ## 🚀 Boot Sequence
 
-Authentic BIOS-style boot animation:
+Authentic text-only BIOS boot animation (no emojis/icons):
 
-### Phases:
-1. **BIOS Phase** - Green text on black screen showing system checks
-   - RAM detection
-   - CPU detection
-   - Display adapter initialization
-   - Kernel module loading
-   - Filesystem mounting
+### Visual Style:
+- **Pure Text** - No images, SVGs, or emojis
+- **Black Background** (#000) with white monospace font (Courier New)
+- **Line-by-line Animation** - 200ms delay between each line
 
-2. **Loading Phase** - Modern loading screen with progress bar
-   - RetroOS logo with pulse animation
-   - Progress bar (0-100%)
-   - Status messages ("Loading system files...", "Initializing desktop...", etc.)
+### Boot Content:
+```
+AMIBIOS (C) 1995 American Megatrends Inc.
+BIOS Date 01/15/95 14:22:51 Ver: 1.02
 
-3. **Desktop** - Smooth transition to main desktop
+CPU: Intel 486DX2-66
+Memory Test: 640K OK
+
+Detecting Primary Master ... [HDD 540MB]
+Detecting Primary Slave  ... [None]
+
+Loading RETRO OS v1.0...
+_ (blinking cursor)
+```
+
+### Transition:
+- After 3 seconds of blinking cursor, fade to Desktop
+- Smooth 500ms opacity transition
 
 ### Technical Details:
-- Sequential animation phases with timed transitions
-- Real-time progress updates
-- Responsive layout for all screen sizes
+- Sequential line-by-line animation with 200ms intervals
+- Blinking cursor animation (CSS animate-pulse)
+- Fade transition using CSS opacity
+- No external assets - pure text rendering
 
 ## 🎨 Visual Polish
 
@@ -346,16 +406,38 @@ Authentic BIOS-style boot animation:
 
 ## 💻 Enhanced Terminal
 
-A fully-featured terminal emulator with advanced commands and visual effects:
+A fully-featured terminal emulator with permanent matrix background:
 
-### Matrix Effect Fix:
-- **Bug Fixed** - Matrix canvas no longer overlaps text input
-- **Solution** - Canvas z-index: 0, text container z-index: 10 with background rgba(0,0,0,0.85)
-- **Result** - Text remains fully readable while Matrix effect plays behind
+### Matrix Effect:
+- **Permanent Subtle Background** - Always visible at opacity 0.15
+- **No Toggle Command** - Removed `matrix` command from help
+- **Z-Index Layering** - Canvas at z-index: 0, text at z-index: 10
+- **Readable Text** - Background rgba(0,0,0,0.85) ensures text clarity
+- **Smooth Animation** - requestAnimationFrame for 60fps
 
-### New Commands:
-- **neofetch** - Display ASCII art laptop with system information (OS, Kernel, Resolution, etc.)
-- **matrix** - Toggle Matrix-style digital rain effect overlay (press again to disable)
+### Input Bug Fix:
+- **Fixed** - Typing numbers no longer triggers "Command not found"
+- **Solution** - Only process input as command when Enter is pressed
+- **Result** - Natural typing experience without false command errors
+
+### Layout Improvements:
+- **Padding Added** - 1rem padding to text containers
+- **No Border Touch** - Text doesn't touch window borders
+- **Better Readability** - More comfortable viewing experience
+
+### Commands:
+- **neofetch** - Display ASCII art laptop with system information
+- **help** - List all available commands
+- **clear** - Clear terminal screen
+- **projects** - List portfolio projects
+- **contact** - Show contact information
+- **skills** - Display technical skills
+- **echo [text]** - Print text to terminal
+- **date** - Show current date and time
+- **whoami** - Display current user
+- **ls** - List directory contents
+- **cat [file]** - Display file contents
+- **sudo crash** - Trigger BSOD (easter egg)
 - **help** - List all available commands with descriptions
 - **clear** - Clear terminal screen
 - **echo [text]** - Print text to terminal

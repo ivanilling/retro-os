@@ -232,6 +232,26 @@ html, body, #root {
 }
 
 /* ============================================
+   Text Container Padding
+   ============================================ */
+
+/* Ensure text doesn't touch borders in various components */
+[role="main"] > div,
+[role="dialog"] > div {
+  padding: 1rem;
+}
+
+/* Terminal specific padding */
+.terminal-content {
+  padding: 1rem;
+}
+
+/* Settings padding */
+.settings-content {
+  padding: 1rem;
+}
+
+/* ============================================
    Custom Cursor (Pixel Art Style)
    ============================================ */
 
