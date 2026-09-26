@@ -1,132 +1,119 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { findCommand, getCommandNames, type CommandContext } from './commands';
 
-const COMMANDS = {
-  help: `Available commands:
-  help        - Show this help message
-  about       - About me
-  projects    - List my projects
-  skills      - Show my skills
-  contact     - Contact information
-  whoami      - Who am I?
-  date        - Current date/time
-  clear       - Clear terminal
-  echo [text] - Print text
-  neofetch    - System info`,
-  about: `
-╔══════════════════════════════════════╗
-║         Alex Chen - Developer        ║
-╠══════════════════════════════════════╣
-║ Full-stack developer with 5+ years   ║
-║ of experience building modern web    ║
-║ applications. Passionate about       ║
-║ creating beautiful, performant, and  ║
-║ accessible user interfaces.          ║
-╚══════════════════════════════════════╝`,
-  projects: `
-📁 Projects:
-  ├── retro-os-portfolio    → This website! (React + TypeScript + Tailwind)
-  ├── cloud-dashboard       → Real-time monitoring dashboard
-  ├── ai-chat-platform      → GPT-powered chat application
-  ├── e-commerce-engine     → Headless commerce solution
-  └── open-source-lib       → React component library (2k+ stars)`,
-  skills: `
-🛠️ Technical Skills:
-  Languages:  TypeScript, JavaScript, Python, Rust
-  Frontend:   React, Vue, Svelte, Tailwind CSS
-  Backend:    Node.js, Express, FastAPI, Go
-  Database:   PostgreSQL, MongoDB, Redis
-  DevOps:     Docker, K8s, AWS, CI/CD
-  Other:      GraphQL, WebSocket, WebRTC`,
-  contact: `
-📬 Contact Me:
-  Email:    alex@example.com
-  GitHub:   github.com/alexchen
-  LinkedIn: linkedin.com/in/alexchen
-  Twitter:  @alexchen_dev`,
-  whoami: 'guest@retro-os ~ You are a visitor exploring my portfolio!',
-  date: () => new Date().toLocaleString(),
-  neofetch: `
-       ████████       guest@retro-os
-     ██        ██     ──────────────
-   ██   ██████   ██   OS: Retro OS v1.0
-  ██   ██    ██   ██  Host: Portfolio
-  ██   ████████   ██  Kernel: React 18
-   ██            ██   Shell: WebTerminal
-     ██        ██     DE: Retro Desktop
-       ████████       WM: Zustand
-                      Theme: Win95/MacOS8
-                      Terminal: retro-term
-                      CPU: Your Browser
-                      Memory: ∞ / ∞`,
-};
+interface TerminalProps {
+  windowId?: string;
+}
 
-export default function Terminal() {
-  const [history, setHistory] = useState<string[]>([
-    '╔═══════════════════════════════════════════╗',
-    '║  Retro OS Terminal v1.0                   ║',
-    '║  Type "help" for available commands.      ║',
-    '╚═══════════════════════════════════════════╝',
-    '',
+interface TerminalLine {
+  type: 'input' | 'output' | 'error';
+  content: string;
+}
+
+export default function Terminal({ windowId }: TerminalProps) {
+  const [lines, setLines] = useState<TerminalLine[]>([
+    { type: 'output', content: '╔═══════════════════════════════════════════════════╗' },
+    { type: 'output', content: '║  RetroOS Terminal v1.0                            ║' },
+    { type: 'output', content: '║  Type "help" for available commands               ║' },
+    { type: 'output', content: '╚═══════════════════════════════════════════════════╝' },
+    { type: 'output', content: '' },
   ]);
   const [input, setInput] = useState('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isMatrixActive, setIsMatrixActive] = useState(false);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const matrixCanvasRef = useRef<HTMLCanvasElement>(null);
+  const matrixAnimationRef = useRef<number | null>(null);
 
-  useEffect(() => {
+  // Автопрокрутка к низу
+  const scrollToBottom = useCallback(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }, [history]);
+  }, []);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    scrollToBottom();
+  }, [lines, scrollToBottom]);
+
+  // Очистка терминала
+  const clearTerminal = useCallback(() => {
+    setLines([]);
   }, []);
 
-  const processCommand = useCallback((cmd: string) => {
-    const trimmed = cmd.trim().toLowerCase();
-    const parts = trimmed.split(' ');
-    const command = parts[0];
-    const args = parts.slice(1).join(' ');
-
-    if (command === 'clear') {
-      setHistory([]);
-      return;
-    }
-
-    if (command === 'echo') {
-      setHistory(prev => [...prev, `guest@retro-os:~$ ${cmd}`, args || '']);
-      return;
-    }
-
-    if (command === '') {
-      setHistory(prev => [...prev, 'guest@retro-os:~$ ']);
-      return;
-    }
-
-    const output = (COMMANDS as any)[command];
-    if (output !== undefined) {
-      const result = typeof output === 'function' ? output() : output;
-      setHistory(prev => [...prev, `guest@retro-os:~$ ${cmd}`, result]);
-    } else {
-      setHistory(prev => [...prev, `guest@retro-os:~$ ${cmd}`, `Command not found: ${command}. Type "help" for available commands.`]);
-    }
+  // Переключение Matrix эффекта
+  const toggleMatrix = useCallback(() => {
+    setIsMatrixActive(prev => !prev);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    processCommand(input);
-    setCommandHistory(prev => [...prev, input]);
+  // Получить разрешение окна
+  const getResolution = useCallback(() => {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  }, []);
+
+  // Выполнение команды
+  const executeCommand = useCallback(async (commandStr: string) => {
+    const trimmed = commandStr.trim();
+    if (!trimmed) return;
+
+    // Добавить команду в историю
+    setLines(prev => [...prev, { type: 'input', content: `$ ${trimmed}` }]);
+    setCommandHistory(prev => [...prev, trimmed]);
     setHistoryIndex(-1);
-    setInput('');
-  };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowUp') {
+    // Парсинг команды и аргументов
+    const parts = trimmed.split(' ');
+    const commandName = parts[0];
+    const args = parts.slice(1);
+
+    // Поиск команды
+    const command = findCommand(commandName);
+    
+    if (!command) {
+      setLines(prev => [...prev, { 
+        type: 'error', 
+        content: `Command not found: ${commandName}. Type "help" for available commands.` 
+      }]);
+      return;
+    }
+
+    // Создание контекста для команды
+    const context: CommandContext = {
+      clearTerminal,
+      toggleMatrix,
+      getResolution,
+    };
+
+    try {
+      const output = await command.execute(args, context);
+      if (output) {
+        setLines(prev => [...prev, { type: 'output', content: output }]);
+      }
+    } catch (error) {
+      setLines(prev => [...prev, { 
+        type: 'error', 
+        content: `Error executing command: ${error}` 
+      }]);
+    }
+  }, [clearTerminal, toggleMatrix, getResolution]);
+
+  // Обработка клавиши Enter
+  const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      executeCommand(input);
+      setInput('');
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (commandHistory.length > 0) {
-        const newIndex = historyIndex < commandHistory.length - 1 ? historyIndex + 1 : historyIndex;
+        const newIndex = historyIndex < commandHistory.length - 1 
+          ? historyIndex + 1 
+          : historyIndex;
         setHistoryIndex(newIndex);
         setInput(commandHistory[commandHistory.length - 1 - newIndex] || '');
       }
@@ -140,35 +127,131 @@ export default function Terminal() {
         setHistoryIndex(-1);
         setInput('');
       }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      // Tab completion
+      const commandNames = getCommandNames();
+      const matches = commandNames.filter(name => name.startsWith(input));
+      if (matches.length === 1) {
+        setInput(matches[0]);
+      } else if (matches.length > 1) {
+        setLines(prev => [...prev, { 
+          type: 'output', 
+          content: matches.join('  ') 
+        }]);
+      }
     }
-  };
+  }, [input, commandHistory, historyIndex, executeCommand]);
+
+  // Matrix эффект
+  useEffect(() => {
+    if (!isMatrixActive || !matrixCanvasRef.current) return;
+
+    const canvas = matrixCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Установка размера canvas
+    const resizeCanvas = () => {
+      if (containerRef.current) {
+        canvas.width = containerRef.current.clientWidth;
+        canvas.height = containerRef.current.clientHeight;
+      }
+    };
+    resizeCanvas();
+
+    // Настройка матрицы
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops: number[] = Array(columns).fill(1);
+
+    // Анимация
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0f0';
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+
+      matrixAnimationRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    // Очистка при размонтировании или деактивации
+    return () => {
+      if (matrixAnimationRef.current) {
+        cancelAnimationFrame(matrixAnimationRef.current);
+      }
+    };
+  }, [isMatrixActive]);
+
+  // Фокус на input при клике
+  const handleContainerClick = useCallback(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
-    <article
-      className="h-full w-full bg-gray-900 text-green-400 font-mono text-sm p-2 overflow-hidden flex flex-col"
+    <div 
+      ref={containerRef}
+      className="h-full w-full bg-black text-green-400 font-mono text-sm p-4 overflow-y-auto relative cursor-text"
+      onClick={handleContainerClick}
       role="main"
       aria-label="Terminal application"
-      onClick={() => inputRef.current?.focus()}
     >
-      <div ref={containerRef} className="flex-1 overflow-y-auto whitespace-pre-wrap break-words">
-        {history.map((line, i) => (
-          <div key={i} className="leading-5">{line}</div>
+      {/* Matrix overlay */}
+      {isMatrixActive && (
+        <canvas
+          ref={matrixCanvasRef}
+          className="absolute inset-0 pointer-events-none opacity-30"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Terminal content */}
+      <div className="relative z-10">
+        {lines.map((line, index) => (
+          <div 
+            key={index} 
+            className={`whitespace-pre-wrap break-words ${
+              line.type === 'error' ? 'text-red-500' : 
+              line.type === 'input' ? 'text-cyan-400' : 
+              'text-green-400'
+            }`}
+          >
+            {line.content}
+          </div>
         ))}
-        <form onSubmit={handleSubmit} className="flex items-center">
-          <span className="text-green-300 mr-1">guest@retro-os:~$</span>
+
+        {/* Input line */}
+        <div className="flex items-center">
+          <span className="text-cyan-400 mr-2">$</span>
           <input
             ref={inputRef}
             type="text"
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent text-green-400 outline-none border-none caret-green-400"
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            className="flex-1 bg-transparent outline-none border-none text-green-400 caret-green-400"
+            autoFocus
             aria-label="Terminal input"
-            autoComplete="off"
             spellCheck={false}
           />
-        </form>
+          {/* Мигающий курсор */}
+          <span className="w-2 h-4 bg-green-400 animate-pulse" aria-hidden="true" />
+        </div>
       </div>
-    </article>
+    </div>
   );
 }

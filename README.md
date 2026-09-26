@@ -6,6 +6,37 @@ A production-grade "Retro Operating System" portfolio website built with React 1
 
 Windows 95 / Mac OS 8 hybrid with modern accessibility standards. Pixel-perfect but responsive.
 
+## 💻 Enhanced Terminal
+
+A fully-featured terminal emulator with advanced commands and visual effects:
+
+### New Commands:
+- **neofetch** - Display ASCII art laptop with system information (OS, Kernel, Resolution, etc.)
+- **matrix** - Toggle Matrix-style digital rain effect overlay (press again to disable)
+- **help** - List all available commands with descriptions
+- **clear** - Clear terminal screen
+- **echo [text]** - Print text to terminal
+- **date** - Show current date and time
+- **whoami** - Display current user
+- **ls** - List directory contents
+- **cat [file]** - Display file contents
+- **projects** - List portfolio projects
+- **contact** - Show contact information
+- **skills** - Display technical skills
+
+### UX Improvements:
+- **Command History** - Use ↑/↓ arrow keys to navigate through previous commands
+- **Tab Completion** - Press Tab to auto-complete command names
+- **Auto-scroll** - Terminal automatically scrolls to bottom on new output
+- **Blinking Cursor** - Visual indicator for input position
+- **Color-coded Output** - Cyan for input, green for output, red for errors
+
+### Technical Features:
+- Modular command system in `commands.ts` for easy extension
+- Matrix effect using HTML5 Canvas with `requestAnimationFrame`
+- Dynamic resolution detection for neofetch
+- Context-based command execution for terminal control
+
 ## 💣 Minesweeper Game
 
 A fully functional Minesweeper implementation with classic Windows 95 aesthetics:
