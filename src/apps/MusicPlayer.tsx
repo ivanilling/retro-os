@@ -178,22 +178,9 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
     <div className="h-full w-full flex flex-col bg-gray-800 p-2">
       {/* Main Player */}
       <div className="flex gap-3 mb-3">
-        {/* Album Cover */}
+        {/* Album Cover - always show cassette fallback (no external images) */}
         <div className="w-32 h-32 bg-black border-2 border-gray-600 flex items-center justify-center overflow-hidden">
-          {!coverError ? (
-            <img
-              src={currentTrack.coverSrc}
-              alt={`${currentTrack.album} cover`}
-              className="w-full h-full object-cover"
-              style={{
-                imageRendering: 'pixelated',
-                filter: 'contrast(1.2) saturate(0.8)',
-              }}
-              onError={() => setCoverError(true)}
-            />
-          ) : (
-            <CassetteFallback />
-          )}
+          <CassetteFallback />
         </div>
 
         {/* LCD Display */}
@@ -344,13 +331,13 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
         ))}
       </div>
 
-      {/* Hidden Audio Element */}
-      <audio
+      {/* Audio element disabled - using procedural noise only */}
+      {/* <audio
         ref={audioRef}
         src={currentTrack.audioSrc}
         loop={isLooping}
         onEnded={() => {}}
-      />
+      /> */}
     </div>
   );
 }

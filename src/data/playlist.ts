@@ -15,8 +15,8 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'Pablo Honey',
     duration: '3:56',
-    audioSrc: '/audio/creep.mp3',
-    coverSrc: '/covers/pablo-honey.jpg',
+    audioSrc: '',
+    coverSrc: '',
   },
   {
     id: '2',
@@ -24,8 +24,8 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'The Bends',
     duration: '3:54',
-    audioSrc: '/audio/just.mp3',
-    coverSrc: '/covers/the-bends.jpg',
+    audioSrc: '',
+    coverSrc: '',
   },
   {
     id: '3',
@@ -33,7 +33,7 @@ export const playlist: Track[] = [
     artist: 'Radiohead',
     album: 'OK Computer',
     duration: '3:49',
-    audioSrc: '/audio/no-surprises.mp3',
-    coverSrc: '/covers/ok-computer.jpg',
+    audioSrc: '',
+    coverSrc: '',
   },
 ];
