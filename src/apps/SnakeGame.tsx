@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 interface SnakeGameProps {
   windowId?: string;
@@ -15,8 +15,16 @@ interface Point {
 const GRID_SIZE = 20;
 const CELL_SIZE = 20;
 const CANVAS_SIZE = GRID_SIZE * CELL_SIZE;
-const INITIAL_SPEED = 150; // ms per move
-const SPEED_INCREMENT = 2; // ms faster per food eaten
+const INITIAL_SPEED = 150;
+const SPEED_INCREMENT = 2;
+
+// Pixel art для головы змеи (направление вправо)
+const SNAKE_HEAD_RIGHT = [
+  [1, 1, 1, 1],
+  [1, 0, 1, 0],
+  [1, 1, 1, 1],
+  [1, 1, 1, 1],
+];
 
 export default function SnakeGame({ windowId }: SnakeGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,7 +44,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>('idle');
   const [announcement, setAnnouncement] = useState('');
 
-  // Генерация еды (не на змейке)
+  // Генерация еды
   const generateFood = useCallback((): Point => {
     let newFood: Point;
     do {
@@ -62,11 +70,9 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
 
   // Проверка коллизий
   const checkCollision = useCallback((head: Point): boolean => {
-    // Стены
     if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
       return true;
     }
-    // Сам
     return snakeRef.current.some((segment, index) => 
       index > 0 && segment.x === head.x && segment.y === head.y
     );
@@ -95,7 +101,6 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
         break;
     }
 
-    // Проверка коллизии
     if (checkCollision(newHead)) {
       setGameStatus('gameover');
       setAnnouncement(`Game Over! Final score: ${score}`);
@@ -109,16 +114,13 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
 
     const newSnake = [newHead, ...snake];
 
-    // Проверка еды
     if (newHead.x === foodRef.current.x && newHead.y === foodRef.current.y) {
-      // Растём
       const newScore = score + 10;
       setScore(newScore);
       setAnnouncement(`Score: ${newScore}`);
       foodRef.current = generateFood();
       speedRef.current = Math.max(50, speedRef.current - SPEED_INCREMENT);
     } else {
-      // Двигаемся (убираем хвост)
       newSnake.pop();
     }
 
@@ -137,9 +139,9 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // Рисуем сетку (опционально, для ретро вида)
-    ctx.strokeStyle = '#111111';
-    ctx.lineWidth = 0.5;
+    // Сетка ( faint grid )
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       ctx.beginPath();
       ctx.moveTo(i * CELL_SIZE, 0);
@@ -151,31 +153,50 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
       ctx.stroke();
     }
 
-    // Рисуем еду
+    // Еда - pixel art apple
+    const foodX = foodRef.current.x * CELL_SIZE;
+    const foodY = foodRef.current.y * CELL_SIZE;
+    
+    // Яблоко (красный квадрат)
     ctx.fillStyle = '#ff0000';
-    ctx.fillRect(
-      foodRef.current.x * CELL_SIZE + 2,
-      foodRef.current.y * CELL_SIZE + 2,
-      CELL_SIZE - 4,
-      CELL_SIZE - 4
-    );
+    ctx.fillRect(foodX + 4, foodY + 6, 12, 12);
+    
+    // Листик (зелёный пиксель)
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(foodX + 8, foodY + 2, 4, 4);
 
-    // Рисуем змейку
+    // Змейка
     snakeRef.current.forEach((segment, index) => {
+      const x = segment.x * CELL_SIZE;
+      const y = segment.y * CELL_SIZE;
+
       if (index === 0) {
-        // Голова
+        // Голова с глазами
         ctx.fillStyle = '#00ff00';
+        ctx.fillRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+        
+        // Глаза (направление)
+        ctx.fillStyle = '#000000';
+        const direction = directionRef.current;
+        if (direction === 'RIGHT') {
+          ctx.fillRect(x + 12, y + 6, 3, 3);
+          ctx.fillRect(x + 12, y + 12, 3, 3);
+        } else if (direction === 'LEFT') {
+          ctx.fillRect(x + 5, y + 6, 3, 3);
+          ctx.fillRect(x + 5, y + 12, 3, 3);
+        } else if (direction === 'UP') {
+          ctx.fillRect(x + 6, y + 5, 3, 3);
+          ctx.fillRect(x + 12, y + 5, 3, 3);
+        } else {
+          ctx.fillRect(x + 6, y + 12, 3, 3);
+          ctx.fillRect(x + 12, y + 12, 3, 3);
+        }
       } else {
-        // Тело (градиент)
+        // Тело с gap
         const intensity = Math.max(100, 255 - index * 5);
         ctx.fillStyle = `rgb(0, ${intensity}, 0)`;
+        ctx.fillRect(x + 3, y + 3, CELL_SIZE - 6, CELL_SIZE - 6);
       }
-      ctx.fillRect(
-        segment.x * CELL_SIZE + 1,
-        segment.y * CELL_SIZE + 1,
-        CELL_SIZE - 2,
-        CELL_SIZE - 2
-      );
     });
   }, []);
 
@@ -221,12 +242,10 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
   // Обработка клавиш
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Предотвращаем скролл страницы
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
         e.preventDefault();
       }
 
-      // Space - старт/рестарт
       if (e.code === 'Space') {
         if (gameStatus === 'idle' || gameStatus === 'gameover') {
           resetGame();
@@ -236,7 +255,6 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
         return;
       }
 
-      // P - пауза
       if (e.code === 'KeyP') {
         if (gameStatus === 'playing') {
           setGameStatus('paused');
@@ -248,7 +266,6 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
         return;
       }
 
-      // Стрелки - направление (только во время игры)
       if (gameStatus !== 'playing') return;
 
       const currentDirection = directionRef.current;
@@ -328,10 +345,11 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
 
           {/* Overlays */}
           {gameStatus === 'idle' && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-4xl mb-4">🐍</div>
-                <div className="text-2xl font-bold mb-2">Snake</div>
+                <div className="text-3xl font-bold mb-4" style={{ fontFamily: "'VT323', monospace" }}>
+                  SNAKE
+                </div>
                 <div className="text-sm">Press Space to Start</div>
                 <div className="text-xs mt-4 text-gray-400">
                   Use Arrow Keys to Move<br />
@@ -342,23 +360,25 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
           )}
 
           {gameStatus === 'paused' && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-4xl mb-4">⏸️</div>
-                <div className="text-2xl font-bold">Paused</div>
+                <div className="text-2xl font-bold" style={{ fontFamily: "'VT323', monospace" }}>
+                  PAUSED
+                </div>
                 <div className="text-sm mt-2">Press P to Resume</div>
               </div>
             </div>
           )}
 
           {gameStatus === 'gameover' && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-4xl mb-4">💀</div>
-                <div className="text-2xl font-bold text-red-500 mb-2">Game Over!</div>
+                <div className="text-3xl font-bold text-red-500 mb-2" style={{ fontFamily: "'VT323', monospace" }}>
+                  GAME OVER
+                </div>
                 <div className="text-lg mb-2">Score: {score}</div>
                 {score >= highScore && score > 0 && (
-                  <div className="text-sm text-yellow-400 mb-2">🏆 New High Score!</div>
+                  <div className="text-sm text-yellow-400 mb-2">New High Score!</div>
                 )}
                 <div className="text-sm">Press Space to Restart</div>
               </div>
@@ -367,7 +387,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
         </div>
       </div>
 
-      {/* ARIA live region для announcements */}
+      {/* ARIA live region */}
       <div
         className="sr-only"
         role="status"
@@ -377,7 +397,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
         {announcement}
       </div>
 
-      {/* Инструкции */}
+      {/* Instructions */}
       <div className="mt-2 text-xs text-gray-600 text-center">
         <p>Arrow Keys: Move | P: Pause | Space: Start/Restart</p>
       </div>

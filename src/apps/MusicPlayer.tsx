@@ -6,6 +6,39 @@ interface MusicPlayerProps {
   windowId?: string;
 }
 
+// Pixel-art cassette tape SVG fallback
+const CassetteFallback: React.FC = () => (
+  <svg width="128" height="128" viewBox="0 0 128 128" style={{ imageRendering: 'pixelated' }}>
+    {/* Cassette body */}
+    <rect x="16" y="32" width="96" height="64" fill="#8B4513" />
+    <rect x="16" y="32" width="96" height="4" fill="#A0522D" />
+    <rect x="16" y="92" width="96" height="4" fill="#654321" />
+    
+    {/* Label area */}
+    <rect x="24" y="40" width="80" height="32" fill="#F5DEB3" />
+    <rect x="24" y="40" width="80" height="2" fill="#DEB887" />
+    
+    {/* Tape reels */}
+    <circle cx="44" cy="56" r="12" fill="#2F2F2F" />
+    <circle cx="44" cy="56" r="8" fill="#1F1F1F" />
+    <circle cx="44" cy="56" r="4" fill="#0F0F0F" />
+    
+    <circle cx="84" cy="56" r="12" fill="#2F2F2F" />
+    <circle cx="84" cy="56" r="8" fill="#1F1F1F" />
+    <circle cx="84" cy="56" r="4" fill="#0F0F0F" />
+    
+    {/* Tape window */}
+    <rect x="32" y="76" width="64" height="12" fill="#1F1F1F" />
+    <rect x="36" y="78" width="56" height="8" fill="#3F3F3F" />
+    
+    {/* Screws */}
+    <circle cx="24" cy="40" r="2" fill="#654321" />
+    <circle cx="104" cy="40" r="2" fill="#654321" />
+    <circle cx="24" cy="88" r="2" fill="#654321" />
+    <circle cx="104" cy="88" r="2" fill="#654321" />
+  </svg>
+);
+
 export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,6 +48,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [coverError, setCoverError] = useState(false);
+  const [visualizerBars, setVisualizerBars] = useState([20, 20, 20, 20, 20]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const { start: startNoise, stop: stopNoise, setVolume: setNoiseVolumeLevel } = useRetroNoise();
@@ -49,6 +83,26 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
       audio.removeEventListener('loadedmetadata', updateDuration);
     };
   }, []);
+
+  // Визуализатор - анимация при воспроизведении
+  useEffect(() => {
+    if (!isPlaying) {
+      setVisualizerBars([20, 20, 20, 20, 20]);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setVisualizerBars([
+        20 + Math.random() * 60,
+        20 + Math.random() * 60,
+        20 + Math.random() * 60,
+        20 + Math.random() * 60,
+        20 + Math.random() * 60,
+      ]);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   // Обработка окончания трека
   useEffect(() => {
@@ -138,10 +192,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
               onError={() => setCoverError(true)}
             />
           ) : (
-            <div className="text-gray-500 text-xs text-center p-2">
-              <div className="text-2xl mb-1">🎵</div>
-              <div>No Cover</div>
-            </div>
+            <CassetteFallback />
           )}
         </div>
 
@@ -167,14 +218,11 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
 
           {/* Visualizer */}
           <div className="h-8 bg-black border-2 border-gray-600 mt-1 flex items-end justify-around px-1">
-            {[...Array(5)].map((_, i) => (
+            {visualizerBars.map((height, i) => (
               <div
                 key={i}
-                className="w-2 bg-green-400 transition-all"
-                style={{
-                  height: isPlaying ? `${20 + Math.random() * 60}%` : '10%',
-                  animation: isPlaying ? `equalizer ${0.3 + i * 0.1}s infinite alternate` : 'none',
-                }}
+                className="w-2 bg-green-400 transition-all duration-100"
+                style={{ height: `${height}%` }}
               />
             ))}
           </div>
@@ -204,7 +252,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
           style={{ boxShadow: 'inset 1px 1px 0 #888, inset -1px -1px 0 #333' }}
           aria-label="Previous track"
         >
-          <span className="text-green-400 text-sm">⏮</span>
+          <span className="text-green-400 text-sm">|◀</span>
         </button>
         <button
           onClick={handlePlayPause}
@@ -212,7 +260,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
           style={{ boxShadow: 'inset 1px 1px 0 #888, inset -1px -1px 0 #333' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
-          <span className="text-green-400 text-sm">{isPlaying ? '⏸' : '▶'}</span>
+          <span className="text-green-400 text-sm">{isPlaying ? '❚❚' : '▶'}</span>
         </button>
         <button
           onClick={handleNext}
@@ -220,7 +268,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
           style={{ boxShadow: 'inset 1px 1px 0 #888, inset -1px -1px 0 #333' }}
           aria-label="Next track"
         >
-          <span className="text-green-400 text-sm">⏭</span>
+          <span className="text-green-400 text-sm">▶|</span>
         </button>
         <button
           onClick={() => setIsLooping(!isLooping)}
@@ -230,7 +278,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
           style={{ boxShadow: 'inset 1px 1px 0 #888, inset -1px -1px 0 #333' }}
           aria-label="Toggle loop"
         >
-          <span className="text-green-400 text-sm">🔁</span>
+          <span className="text-green-400 text-xs">RPT</span>
         </button>
       </div>
 
@@ -303,14 +351,6 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
         loop={isLooping}
         onEnded={() => {}}
       />
-
-      {/* CSS for equalizer animation */}
-      <style>{`
-        @keyframes equalizer {
-          0% { height: 20%; }
-          100% { height: 80%; }
-        }
-      `}</style>
     </div>
   );
 }

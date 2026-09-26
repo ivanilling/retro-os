@@ -25,13 +25,6 @@ export const appRegistry: AppDefinition[] = [
     component: React.lazy(() => import('../apps/PaintApp')),
   },
   {
-    id: 'browser',
-    title: 'Browser',
-    icon: '🌐',
-    defaultSize: { w: 650, h: 500 },
-    component: React.lazy(() => import('../apps/Browser')),
-  },
-  {
     id: 'settings',
     title: 'Settings',
     icon: '⚙️',
@@ -102,7 +95,7 @@ export const appRegistry: AppDefinition[] = [
 
 // Приложения для рабочего стола (максимум 6)
 export const desktopApps = appRegistry.filter(app => 
-  ['terminal', 'notepad', 'paint', 'browser'].includes(app.id)
+  ['terminal', 'notepad', 'paint', 'music-player', 'calculator'].includes(app.id)
 );
 
 // Игры

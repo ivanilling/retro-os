@@ -48,14 +48,6 @@ export const vfs: VFSNode = {
           appId: 'paint',
         },
         {
-          id: 'browser',
-          name: 'Browser',
-          type: 'file',
-          path: '/Desktop/Browser',
-          icon: 'browser',
-          appId: 'browser',
-        },
-        {
           id: 'music-player',
           name: 'Music Player',
           type: 'file',

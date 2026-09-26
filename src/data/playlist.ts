@@ -36,22 +36,4 @@ export const playlist: Track[] = [
     audioSrc: '/audio/no-surprises.mp3',
     coverSrc: '/covers/ok-computer.jpg',
   },
-  {
-    id: '4',
-    title: 'Everything In Its Right Place',
-    artist: 'Radiohead',
-    album: 'Kid A',
-    duration: '4:12',
-    audioSrc: '/audio/everything.mp3',
-    coverSrc: '/covers/kid-a.jpg',
-  },
-  {
-    id: '5',
-    title: 'Karma Police',
-    artist: 'Radiohead',
-    album: 'OK Computer',
-    duration: '4:21',
-    audioSrc: '/audio/karma-police.mp3',
-    coverSrc: '/covers/ok-computer.jpg',
-  },
 ];
