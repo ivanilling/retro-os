@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useWindowStore } from '../store/windowStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { useAudio } from '../hooks/useAudio';
+import { useSound } from '../hooks/useSound';
 import StartMenu from './StartMenu';
 
 export default function Taskbar() {
@@ -10,15 +10,19 @@ export default function Taskbar() {
   const minimizeWindow = useWindowStore(s => s.minimizeWindow);
   const toggleStartMenu = useWindowStore(s => s.toggleStartMenu);
   const startMenuOpen = useWindowStore(s => s.startMenuOpen);
-  const { playSound } = useAudio();
-  const [time, setTime] = useState(new Date());
   const soundEnabled = useSettingsStore(s => s.soundEnabled);
   const toggleSound = useSettingsStore(s => s.toggleSound);
+  const { playSound, setMuted } = useSound();
+  const [time, setTime] = useState(new Date());
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    setMuted(!soundEnabled);
+  }, [soundEnabled, setMuted]);
 
   const handleTaskClick = (id: string, isMinimized: boolean) => {
     playSound('click');
@@ -91,16 +95,7 @@ export default function Taskbar() {
               aria-label={`${win.title} - ${win.isMinimized ? 'minimized' : 'active'}`}
               aria-pressed={!win.isMinimized}
             >
-              <span className="text-sm">{
-                win.appId === 'terminal' ? '💻' :
-                win.appId === 'notepad' ? '📝' :
-                win.appId === 'image-viewer' ? '🖼️' :
-                win.appId === 'browser' ? '🌐' :
-                win.appId === 'settings' ? '⚙️' :
-                win.appId === 'about' ? 'ℹ️' :
-                win.appId === 'minesweeper' ? '💣' :
-                win.appId === 'paint' ? '🎨' : '📁'
-              }</span>
+              <span className="text-sm">{win.appId === 'terminal' ? '💻' : win.appId === 'notepad' ? '📝' : win.appId === 'image-viewer' ? '🖼️' : win.appId === 'browser' ? '🌐' : win.appId === 'settings' ? '⚙️' : win.appId === 'about' ? 'ℹ️' : win.appId === 'minesweeper' ? '💣' : win.appId === 'paint' ? '🎨' : '📁'}</span>
               <span className="truncate">{win.title}</span>
             </button>
           ))}
@@ -114,7 +109,9 @@ export default function Taskbar() {
           <button
             onClick={() => {
               toggleSound();
-              playSound('click');
+              if (soundEnabled) {
+                playSound('click');
+              }
             }}
             className="text-sm hover:bg-gray-300 p-0.5 rounded"
             aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}

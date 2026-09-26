@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useSettingsStore } from '../store/settingsStore';
 
 type SoundType = 'click' | 'open' | 'close' | 'error' | 'startup' | 'minimize' | 'maximize';
 
@@ -20,11 +19,12 @@ const soundConfigs: Record<SoundType, SoundConfig> = {
   maximize: { frequency: 700, duration: 0.1, type: 'triangle', volume: 0.07 },
 };
 
-export function useAudio() {
-  const soundEnabled = useSettingsStore(s => s.soundEnabled);
+export function useSound() {
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const isMutedRef = useRef(false);
 
-  const getAudioContext = useCallback(() => {
+  // Инициализация AudioContext при первом взаимодействии
+  const initAudioContext = useCallback(() => {
     if (!audioCtxRef.current) {
       try {
         audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -35,10 +35,11 @@ export function useAudio() {
     return audioCtxRef.current;
   }, []);
 
+  // Воспроизведение звука
   const playSound = useCallback((type: SoundType) => {
-    if (!soundEnabled) return;
+    if (isMutedRef.current) return;
 
-    const ctx = getAudioContext();
+    const ctx = initAudioContext();
     if (!ctx) return;
 
     const config = soundConfigs[type];
@@ -62,7 +63,30 @@ export function useAudio() {
     } catch (e) {
       // Silent fail
     }
-  }, [soundEnabled, getAudioContext]);
+  }, [initAudioContext]);
 
-  return { playSound };
+  // Установка состояния mute
+  const setMuted = useCallback((muted: boolean) => {
+    isMutedRef.current = muted;
+  }, []);
+
+  // Инициализация при монтировании
+  useEffect(() => {
+    // Попытка инициализировать при первом клике пользователя
+    const handleFirstInteraction = () => {
+      initAudioContext();
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('keydown', handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, [initAudioContext]);
+
+  return { playSound, setMuted };
 }

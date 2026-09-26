@@ -6,6 +6,91 @@ A production-grade "Retro Operating System" portfolio website built with React 1
 
 Windows 95 / Mac OS 8 hybrid with modern accessibility standards. Pixel-perfect but responsive.
 
+## 🔊 Audio System
+
+A complete sound effects system using Web Audio API:
+
+### Features:
+- **UI Sound Effects** - Click, open, close, error, startup, minimize, maximize sounds
+- **Global Mute Toggle** - Button in taskbar system tray
+- **Persistent Settings** - Mute state saved to localStorage
+- **No Autoplay** - Sounds only play after first user interaction (browser policy compliant)
+- **Web Audio API** - No external audio files needed, all sounds generated procedurally
+
+### Sound Types:
+- `click` - UI button clicks
+- `open` - Window open
+- `close` - Window close
+- `error` - Error/alert
+- `startup` - System boot
+- `minimize` - Window minimize
+- `maximize` - Window maximize
+
+### Technical Details:
+- Custom `useAudio` hook with AudioContext management
+- Oscillator-based sound generation (sine, square, triangle, sawtooth waves)
+- Automatic AudioContext initialization on first user interaction
+- Volume envelope with exponential decay for natural sound
+
+## 🖥️ Screensaver
+
+Classic "Flying Windows" screensaver with idle detection:
+
+### Features:
+- **Idle Detection** - Activates after 120 seconds of no mouse/keyboard activity
+- **Flying Windows Animation** - 8 colorful windows bouncing around the screen
+- **Auto-Dismiss** - Any mouse movement or key press exits screensaver
+- **Timer Reset** - Idle timer resets on any user interaction
+- **GPU Accelerated** - Uses `transform: translateZ(0)` for smooth animation
+
+### Animation Details:
+- Random window positions and velocities
+- Boundary collision detection with bounce physics
+- Windows 95 style title bars with gradient colors
+- Semi-transparent overlay effect
+
+## 🚀 Boot Sequence
+
+Authentic BIOS-style boot animation:
+
+### Phases:
+1. **BIOS Phase** - Green text on black screen showing system checks
+   - RAM detection
+   - CPU detection
+   - Display adapter initialization
+   - Kernel module loading
+   - Filesystem mounting
+
+2. **Loading Phase** - Modern loading screen with progress bar
+   - RetroOS logo with pulse animation
+   - Progress bar (0-100%)
+   - Status messages ("Loading system files...", "Initializing desktop...", etc.)
+
+3. **Desktop** - Smooth transition to main desktop
+
+### Technical Details:
+- Sequential animation phases with timed transitions
+- Real-time progress updates
+- Responsive layout for all screen sizes
+
+## 🎨 Visual Polish
+
+### Custom Pixel-Art Cursor:
+- SVG-based cursor for crisp rendering at any resolution
+- Different cursors for different contexts (default, pointer, text, move)
+- Classic Windows 95 arrow design
+
+### Enhanced Window Shadows:
+- Multi-layer shadows for depth perception
+- Stronger shadows for active/focused windows
+- Inset borders for authentic 3D effect
+
+### CRT Effects:
+- Scanline overlay with adjustable opacity
+- Vignette effect for screen curvature simulation
+- Subtle flicker animation (toggleable)
+- Performance mode for low-end devices
+
 ## 💻 Enhanced Terminal
 
 A fully-featured terminal emulator with advanced commands and visual effects:

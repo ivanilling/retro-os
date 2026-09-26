@@ -1,10 +1,12 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useWindowStore } from './store/windowStore';
 import Window from './components/Window';
 import Desktop from './components/Desktop';
 import Taskbar from './components/Taskbar';
 import CRTOverlay from './components/CRTOverlay';
+import BootSequence from './components/BootSequence';
+import Screensaver from './components/Screensaver';
 
 // Persist state to localStorage
 function usePersistState() {
@@ -20,6 +22,49 @@ function usePersistState() {
       // Storage full or unavailable
     }
   }, [windows, iconPositions, notepadContent]);
+}
+
+// Screensaver idle detection
+function useScreensaver() {
+  const [isScreensaverActive, setIsScreensaverActive] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetTimer = useCallback(() => {
+    if (isScreensaverActive) {
+      setIsScreensaverActive(false);
+    }
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // 120 seconds idle time
+    timeoutRef.current = setTimeout(() => {
+      setIsScreensaverActive(true);
+    }, 120000);
+  }, [isScreensaverActive]);
+
+  useEffect(() => {
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'click'];
+    
+    events.forEach(event => {
+      document.addEventListener(event, resetTimer);
+    });
+
+    // Start initial timer
+    resetTimer();
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, resetTimer);
+      });
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [resetTimer]);
+
+  return isScreensaverActive;
 }
 
 function LoadingScreen() {
@@ -38,6 +83,8 @@ function LoadingScreen() {
 
 export default function App() {
   const windows = useWindowStore(s => s.windows);
+  const [bootComplete, setBootComplete] = useState(false);
+  const isScreensaverActive = useScreensaver();
   usePersistState();
 
   // Prevent default context menu on desktop
@@ -52,25 +99,38 @@ export default function App() {
     return () => document.removeEventListener('contextmenu', handler);
   }, []);
 
+  const handleBootComplete = useCallback(() => {
+    setBootComplete(true);
+  }, []);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-black select-none">
-      <Suspense fallback={<LoadingScreen />}>
-        {/* Desktop */}
-        <Desktop />
+      {/* Boot Sequence */}
+      {!bootComplete && <BootSequence onComplete={handleBootComplete} />}
 
-        {/* Windows */}
-        <AnimatePresence>
-          {windows.map(win => (
-            <Window key={win.id} windowState={win} />
-          ))}
-        </AnimatePresence>
+      {/* Main Desktop */}
+      {bootComplete && (
+        <Suspense fallback={<LoadingScreen />}>
+          {/* Desktop */}
+          <Desktop />
 
-        {/* Taskbar */}
-        <Taskbar />
+          {/* Windows */}
+          <AnimatePresence>
+            {windows.map(win => (
+              <Window key={win.id} windowState={win} />
+            ))}
+          </AnimatePresence>
 
-        {/* CRT Effect Overlay */}
-        <CRTOverlay />
-      </Suspense>
+          {/* Taskbar */}
+          <Taskbar />
+
+          {/* CRT Effect Overlay */}
+          <CRTOverlay />
+
+          {/* Screensaver */}
+          {isScreensaverActive && <Screensaver />}
+        </Suspense>
+      )}
     </div>
   );
 }
