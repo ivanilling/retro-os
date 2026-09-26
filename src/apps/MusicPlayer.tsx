@@ -1,10 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { playlist, Track } from '../data/playlist';
 import { useRetroNoise } from '../hooks/useRetroNoise';
 
 interface MusicPlayerProps {
   windowId?: string;
 }
+
+/**
+ * 🎵 MUSIC PLAYER - SEPARATED AUDIO SYSTEMS 🎵
+ * 
+ * AUDIO ARCHITECTURE:
+ * 1. Music: HTML5 <audio> element (separate from Web Audio API)
+ * 2. Noise: AudioContext for procedural pink/white noise (separate system)
+ * 
+ * These two systems are completely independent for reliability.
+ * 
+ * AUDIO FILE PLACEMENT:
+ * Files must be in: public/audio/
+ * Required filenames (exact match):
+ * - creep.mp3
+ * - just.mp3
+ * - no-surprises.mp3
+ * 
+ * DEBUGGING:
+ * Check browser console for:
+ * - "Attempting to play: /audio/..." logs
+ * - Error messages if files fail to load
+ * - Network tab for 404 errors
+ */
 
 // Pixel-art cassette tape SVG fallback
 const CassetteFallback: React.FC = () => (
@@ -39,21 +62,6 @@ const CassetteFallback: React.FC = () => (
   </svg>
 );
 
-/**
- * 🎵 AUDIO FILE PLACEMENT INSTRUCTIONS 🎵
- * 
- * To add music to this player, place your MP3 files in:
- * public/audio/
- * 
- * Required filenames (must match exactly):
- * - creep.mp3
- * - just.mp3
- * - no-surprises.mp3
- * 
- * The player will automatically detect and play these files.
- * If files are missing, the player will show a friendly warning message.
- */
-
 export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -63,58 +71,30 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [coverError, setCoverError] = useState(false);
-  const [audioFilesMissing, setAudioFilesMissing] = useState(false);
+  const [audioError, setAudioError] = useState<string | null>(null);
   const [visualizerBars, setVisualizerBars] = useState([20, 20, 20, 20, 20]);
 
+  // HTML5 Audio element for music (SEPARATE from Web Audio API)
   const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // Web Audio API for procedural noise (SEPARATE system)
   const { start: startNoise, stop: stopNoise, setVolume: setNoiseVolumeLevel } = useRetroNoise();
 
   const currentTrack = playlist[currentTrackIndex];
 
-  // Check if audio files exist
-  useEffect(() => {
-    const checkAudioFiles = async () => {
-      const requiredFiles = ['creep.mp3', 'just.mp3', 'no-surprises.mp3'];
-      let missingCount = 0;
-      
-      for (const file of requiredFiles) {
-        try {
-          const response = await fetch(`/audio/${file}`, { method: 'HEAD' });
-          if (!response.ok) {
-            missingCount++;
-          }
-        } catch (error) {
-          missingCount++;
-        }
-      }
-      
-      if (missingCount > 0) {
-        console.warn(`⚠️ Audio files missing! ${missingCount} of ${requiredFiles.length} files not found.`);
-        console.warn('Please add MP3 files to: public/audio/');
-        console.warn('Required files:');
-        requiredFiles.forEach(file => console.warn(`  - ${file}`));
-        setAudioFilesMissing(true);
-      } else {
-        setAudioFilesMissing(false);
-      }
-    };
-    
-    checkAudioFiles();
-  }, []);
-
-  // Обновление громкости музыки
+  // Update music volume
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = musicVolume / 100;
     }
   }, [musicVolume]);
 
-  // Обновление громкости шума
+  // Update noise volume
   useEffect(() => {
     setNoiseVolumeLevel(noiseVolume);
   }, [noiseVolume, setNoiseVolumeLevel]);
 
-  // Обновление времени
+  // Update time and duration
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -131,7 +111,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
     };
   }, []);
 
-  // Визуализатор - анимация при воспроизведении
+  // Visualizer animation
   useEffect(() => {
     if (!isPlaying) {
       setVisualizerBars([20, 20, 20, 20, 20]);
@@ -151,7 +131,7 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // Обработка окончания трека
+  // Handle track end
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -169,84 +149,114 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
     return () => audio.removeEventListener('ended', handleEnded);
   }, [isLooping, currentTrackIndex]);
 
-  // Play/Pause
-  const handlePlayPause = () => {
+  // Play/Pause with autoplay policy fix
+  const handlePlayPause = useCallback(async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Clear any previous error
+    setAudioError(null);
+
     if (isPlaying) {
+      // Pause
       audio.pause();
       stopNoise();
+      setIsPlaying(false);
     } else {
-      audio.play();
-      startNoise();
+      // Play - fix autoplay policy
+      try {
+        console.log('Attempting to play:', currentTrack.audioSrc);
+        
+        // Resume AudioContext if suspended (for noise)
+        // Note: This is for the noise system, not the music
+        // The music uses HTML5 <audio> which handles autoplay differently
+        
+        await audio.play();
+        startNoise();
+        setIsPlaying(true);
+        console.log('Playback started successfully');
+      } catch (error) {
+        console.error('Playback failed:', error);
+        setAudioError('ERR: PLAYBACK FAILED');
+        setIsPlaying(false);
+      }
     }
-    setIsPlaying(!isPlaying);
-  };
+  }, [isPlaying, currentTrack, startNoise, stopNoise]);
 
   // Next track
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % playlist.length;
     setCurrentTrackIndex(nextIndex);
     setCoverError(false);
+    setAudioError(null);
+    
     if (isPlaying && audioRef.current) {
-      audioRef.current.play();
+      audioRef.current.play().catch(err => {
+        console.error('Failed to play next track:', err);
+        setAudioError('ERR: PLAYBACK FAILED');
+      });
     }
-  };
+  }, [currentTrackIndex, isPlaying]);
 
   // Previous track
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
     setCurrentTrackIndex(prevIndex);
     setCoverError(false);
+    setAudioError(null);
+    
     if (isPlaying && audioRef.current) {
-      audioRef.current.play();
+      audioRef.current.play().catch(err => {
+        console.error('Failed to play previous track:', err);
+        setAudioError('ERR: PLAYBACK FAILED');
+      });
     }
-  };
+  }, [currentTrackIndex, isPlaying]);
 
   // Seek
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
     const time = parseFloat(e.target.value);
     audio.currentTime = time;
     setCurrentTime(time);
-  };
+  }, []);
+
+  // Handle audio error
+  const handleAudioError = useCallback(() => {
+    console.error('Audio file failed to load:', currentTrack.audioSrc);
+    setAudioError('ERR: FILE NOT FOUND');
+    setIsPlaying(false);
+  }, [currentTrack]);
 
   // Format time
-  const formatTime = (seconds: number): string => {
+  const formatTime = useCallback((seconds: number): string => {
     if (isNaN(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-800 p-2">
-      {/* Audio Files Warning */}
-      {audioFilesMissing && (
-        <div className="bg-yellow-900 border-2 border-yellow-600 p-3 mb-3 text-yellow-200 text-xs font-mono">
-          <div className="font-bold mb-1">⚠️ Audio files missing!</div>
-          <div className="text-[10px]">
-            Please add MP3 files to: <code className="bg-black px-1">/public/audio/</code>
-          </div>
-          <div className="text-[10px] mt-1">Required files:</div>
-          <ul className="text-[10px] ml-2 list-disc">
-            <li>creep.mp3</li>
-            <li>just.mp3</li>
-            <li>no-surprises.mp3</li>
-          </ul>
-          <div className="text-[10px] mt-1 text-yellow-400">
-            The player will work with procedural noise until files are added.
-          </div>
-        </div>
-      )}
-      
       {/* Main Player */}
       <div className="flex gap-3 mb-3">
-        {/* Album Cover - always show cassette fallback (no external images) */}
+        {/* Album Cover */}
         <div className="w-32 h-32 bg-black border-2 border-gray-600 flex items-center justify-center overflow-hidden">
-          <CassetteFallback />
+          {!coverError ? (
+            <img
+              src={currentTrack.coverSrc}
+              alt={`${currentTrack.album} cover`}
+              className="w-full h-full object-cover"
+              style={{
+                imageRendering: 'pixelated',
+                filter: 'contrast(1.2) saturate(0.8)',
+              }}
+              onError={() => setCoverError(true)}
+            />
+          ) : (
+            <CassetteFallback />
+          )}
         </div>
 
         {/* LCD Display */}
@@ -267,6 +277,11 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
             <div className="text-green-400 text-xs font-mono mt-2">
               {formatTime(currentTime)} / {formatTime(duration)}
             </div>
+            {audioError && (
+              <div className="text-red-500 text-xs font-mono mt-1 animate-pulse">
+                {audioError}
+              </div>
+            )}
           </div>
 
           {/* Visualizer */}
@@ -380,8 +395,12 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
             onClick={() => {
               setCurrentTrackIndex(index);
               setCoverError(false);
+              setAudioError(null);
               if (isPlaying && audioRef.current) {
-                audioRef.current.play();
+                audioRef.current.play().catch(err => {
+                  console.error('Failed to play track:', err);
+                  setAudioError('ERR: PLAYBACK FAILED');
+                });
               }
             }}
             className={`px-2 py-1 cursor-pointer text-xs font-mono flex items-center gap-2 ${
@@ -397,13 +416,14 @@ export default function MusicPlayer({ windowId }: MusicPlayerProps) {
         ))}
       </div>
 
-      {/* Audio element disabled - using procedural noise only */}
-      {/* <audio
+      {/* HTML5 Audio Element - SEPARATE from Web Audio API */}
+      <audio
         ref={audioRef}
         src={currentTrack.audioSrc}
         loop={isLooping}
-        onEnded={() => {}}
-      /> */}
+        onError={handleAudioError}
+        preload="metadata"
+      />
     </div>
   );
 }
