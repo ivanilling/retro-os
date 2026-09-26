@@ -259,27 +259,23 @@ html, body, #root {
 }
 
 /* ============================================
-   Custom Cursor (Pixel Art Style)
+   Cursor Styles (System Cursors)
    ============================================ */
 
-/* Default cursor - arrow */
 body {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0 L0 14 L4 10 L7 16 L9 15 L6 9 L11 9 Z' fill='white' stroke='black' stroke-width='1'/%3E%3C/svg%3E") 0 0, auto;
+  cursor: default;
 }
 
-/* Pointer cursor for buttons/links */
 button, a, [role="button"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0 L0 14 L4 10 L7 16 L9 15 L6 9 L11 9 Z' fill='white' stroke='black' stroke-width='1'/%3E%3C/svg%3E") 0 0, pointer;
+  cursor: pointer;
 }
 
-/* Text cursor for inputs */
 input, textarea {
   cursor: text;
 }
 
-/* Move cursor for draggable elements */
 [role="application"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0 L0 14 L4 10 L7 16 L9 15 L6 9 L11 9 Z' fill='white' stroke='black' stroke-width='1'/%3E%3C/svg%3E") 0 0, default;
+  cursor: default;
 }
 
 /* ============================================
