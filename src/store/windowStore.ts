@@ -8,6 +8,7 @@ interface WindowStore {
   nextZIndex: number;
   startMenuOpen: boolean;
   activeWindowId: string | null;
+  selectedIconId: string | null;
 
   openWindow: (id: string, title: string, appId: string, defaultSize: { w: number; h: number }) => void;
   closeWindow: (id: string) => void;
@@ -21,6 +22,7 @@ interface WindowStore {
   closeStartMenu: () => void;
   setIconPositions: (positions: DesktopIconPosition[]) => void;
   setNotepadContent: (content: string) => void;
+  setSelectedIcon: (id: string | null) => void;
   restoreState: (state: Partial<{ windows: WindowState[]; iconPositions: DesktopIconPosition[]; notepadContent: string }>) => void;
 }
 
@@ -45,6 +47,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   nextZIndex: persisted?.windows?.length ? Math.max(...persisted.windows.map((w: WindowState) => w.zIndex)) + 1 : 100,
   startMenuOpen: false,
   activeWindowId: null,
+  selectedIconId: null,
 
   openWindow: (id, title, appId, defaultSize) => {
     const existing = get().windows.find(w => w.id === id);
@@ -149,6 +152,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
 
   setIconPositions: (positions) => set({ iconPositions: positions }),
   setNotepadContent: (content) => set({ notepadContent: content }),
+  setSelectedIcon: (id) => set({ selectedIconId: id }),
 
   restoreState: (partialState: Partial<{ windows: WindowState[]; iconPositions: DesktopIconPosition[]; notepadContent: string }>) => set(partialState),
 }));

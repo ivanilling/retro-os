@@ -110,6 +110,16 @@ export default function Window({ windowState }: WindowProps) {
     ? { top: 0, left: 0, width: '100%', height: 'calc(100% - 40px)', zIndex }
     : { top: position.y, left: position.x, width: size.w, height: size.h, zIndex };
 
+  // Обработчик для всего окна — выводит на передний план при ЛЮБОМ клике
+  const handleWindowMouseDown = useCallback((e: React.MouseEvent) => {
+    // Не перехватываем клики на кнопках управления окном
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) return;
+    
+    // Выводим окно на передний план
+    focusWindow(id);
+  }, [id, focusWindow]);
+
   return (
     <motion.div
       initial={{ scale: 0.9, opacity: 0 }}
@@ -118,7 +128,7 @@ export default function Window({ windowState }: WindowProps) {
       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
       className="absolute flex flex-col shadow-2xl border-2 border-gray-600 overflow-hidden"
       style={windowStyle}
-      onClick={() => focusWindow(id)}
+      onMouseDown={handleWindowMouseDown}
       role="dialog"
       aria-label={title}
     >

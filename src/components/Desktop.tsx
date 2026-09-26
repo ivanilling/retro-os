@@ -3,18 +3,22 @@ import { useWindowStore } from '../store/windowStore';
 import { appRegistry } from '../apps/registry';
 import DesktopIcon from './DesktopIcon';
 
-// Only show main apps on desktop (not settings/about)
+// Показываем только основные приложения на рабочем столе (не settings/about)
 const desktopApps = appRegistry.filter(app => !['settings', 'about'].includes(app.id));
 
 export default function Desktop() {
   const openWindow = useWindowStore(s => s.openWindow);
   const closeStartMenu = useWindowStore(s => s.closeStartMenu);
+  const selectedIconId = useWindowStore(s => s.selectedIconId);
+  const setSelectedIcon = useWindowStore(s => s.setSelectedIcon);
 
   const handleDesktopClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeStartMenu();
+      // Снимаем выделение с иконок при клике на пустое место
+      setSelectedIcon(null);
     }
-  }, [closeStartMenu]);
+  }, [closeStartMenu, setSelectedIcon]);
 
   return (
     <main
@@ -26,38 +30,41 @@ export default function Desktop() {
         background: 'linear-gradient(135deg, #008080 0%, #006666 50%, #004d4d 100%)',
       }}
     >
-      {/* Desktop Icons */}
+      {/* Иконки приложений */}
       {desktopApps.map((app, index) => (
         <DesktopIcon
           key={app.id}
-          id={app.id}
-          label={app.title}
           icon={app.icon}
+          label={app.title}
+          appId={app.id}
+          isSelected={selectedIconId === app.id}
           defaultX={20}
           defaultY={20 + index * 90}
           onDoubleClick={() => openWindow(app.id, app.title, app.id, app.defaultSize)}
         />
       ))}
 
-      {/* Additional desktop icons */}
+      {/* Дополнительные иконки */}
       <DesktopIcon
-        id="my-computer"
-        label="My Computer"
         icon="🖥️"
+        label="My Computer"
+        appId="my-computer"
+        isSelected={selectedIconId === 'my-computer'}
         defaultX={20}
         defaultY={20 + desktopApps.length * 90}
         onDoubleClick={() => openWindow('about', 'About', 'about', { w: 450, h: 500 })}
       />
       <DesktopIcon
-        id="recycle-bin"
-        label="Recycle Bin"
         icon="🗑️"
+        label="Recycle Bin"
+        appId="recycle-bin"
+        isSelected={selectedIconId === 'recycle-bin'}
         defaultX={20}
         defaultY={20 + (desktopApps.length + 1) * 90}
         onDoubleClick={() => {}}
       />
 
-      {/* SEO Content - Hidden but accessible to search engines and screen readers */}
+      {/* SEO контент — скрыт, но доступен для поисковых систем и screen readers */}
       <div className="sr-only" aria-hidden="false">
         <h1>Alex Chen - Full Stack Developer Portfolio</h1>
         <p>Full-stack developer with 5+ years of experience building modern web applications. Passionate about creating beautiful, performant, and accessible user interfaces.</p>
