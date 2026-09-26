@@ -347,7 +347,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
           {gameStatus === 'idle' && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-3xl font-bold mb-4" style={{ fontFamily: "'VT323', monospace" }}>
+                <div className="text-3xl font-bold mb-4" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
                   SNAKE
                 </div>
                 <div className="text-sm">Press Space to Start</div>
@@ -362,7 +362,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
           {gameStatus === 'paused' && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-2xl font-bold" style={{ fontFamily: "'VT323', monospace" }}>
+                <div className="text-2xl font-bold" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
                   PAUSED
                 </div>
                 <div className="text-sm mt-2">Press P to Resume</div>
@@ -373,7 +373,7 @@ export default function SnakeGame({ windowId }: SnakeGameProps) {
           {gameStatus === 'gameover' && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/80">
               <div className="text-center text-white">
-                <div className="text-3xl font-bold text-red-500 mb-2" style={{ fontFamily: "'VT323', monospace" }}>
+                <div className="text-3xl font-bold text-red-500 mb-2" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
                   GAME OVER
                 </div>
                 <div className="text-lg mb-2">Score: {score}</div>

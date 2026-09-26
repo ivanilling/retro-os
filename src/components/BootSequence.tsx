@@ -68,7 +68,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
       <div 
         className="text-sm leading-relaxed"
         style={{ 
-          fontFamily: "'VT323', 'Courier New', monospace",
+          fontFamily: "'Courier New', Courier, monospace",
           color: '#33FF33',
         }}
       >

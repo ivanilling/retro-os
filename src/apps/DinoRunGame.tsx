@@ -543,7 +543,7 @@ export default function DinoRunGame({ windowId }: DinoRunGameProps) {
           {gameStatus === 'idle' && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/90">
               <div className="text-center text-gray-800">
-                <div className="text-3xl font-bold mb-4" style={{ fontFamily: "'VT323', monospace" }}>
+                <div className="text-3xl font-bold mb-4" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
                   DINO RUNNER
                 </div>
                 <div className="text-sm mb-4">Press Space or Up Arrow to Start</div>
@@ -559,7 +559,7 @@ export default function DinoRunGame({ windowId }: DinoRunGameProps) {
           {gameStatus === 'gameover' && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/70">
               <div className="text-center text-white">
-                <div className="text-3xl font-bold text-red-500 mb-2" style={{ fontFamily: "'VT323', monospace" }}>
+                <div className="text-3xl font-bold text-red-500 mb-2" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
                   GAME OVER
                 </div>
                 <div className="text-xl mb-2">Score: {formatScore(score)}</div>
